@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { convertCurrencyString } from '@/lib/currencyConverter';
 import { PieChart, Hotel, Utensils, Ticket } from 'lucide-react';
 
-export default function BudgetChart({ budgetBreakdown, currency = 'USD', darkMode }) {
+export default function BudgetChart({ budgetBreakdown, currency = 'USD' }) {
   const [activeSegment, setActiveSegment] = useState(null);
 
   if (!budgetBreakdown) return null;
@@ -43,36 +43,33 @@ export default function BudgetChart({ budgetBreakdown, currency = 'USD', darkMod
   const segments = [
     {
       id: 'stay',
-      label: 'Stay & Hotel',
+      label: 'Lodging & Hotel',
       val: stayVal,
       pct: stayPct,
       formatted: formattedStay,
-      color: '#10b981', // emerald-500
-      glowColor: 'shadow-emerald-500/30',
+      color: '#E05A3A', // coral orange
       icon: Hotel,
       strokeDasharray: `${(stayPct / 100) * circumference} ${circumference}`,
       strokeDashoffset: -stayOffset
     },
     {
       id: 'food',
-      label: 'Food & Dining',
+      label: 'Dining & Food',
       val: foodVal,
       pct: foodPct,
       formatted: formattedFood,
-      color: '#6366f1', // indigo-500
-      glowColor: 'shadow-indigo-500/30',
+      color: '#D47D3B', // warm amber-coral
       icon: Utensils,
       strokeDasharray: `${(foodPct / 100) * circumference} ${circumference}`,
       strokeDashoffset: -foodOffset
     },
     {
       id: 'activities',
-      label: 'Activities & Transport',
+      label: 'Activities & Transit',
       val: activitiesVal,
       pct: actPct,
       formatted: formattedActivities,
-      color: '#f59e0b', // amber-500
-      glowColor: 'shadow-amber-500/30',
+      color: '#4B739B', // editorial blue
       icon: Ticket,
       strokeDasharray: `${(actPct / 100) * circumference} ${circumference}`,
       strokeDashoffset: -actOffset
@@ -80,19 +77,15 @@ export default function BudgetChart({ budgetBreakdown, currency = 'USD', darkMod
   ];
 
   return (
-    <div className={`mt-4 p-5 rounded-2xl border space-y-4 transition-all ${
-      darkMode
-        ? 'bg-slate-900/90 border-slate-800 text-white'
-        : 'bg-white/10 backdrop-blur-md border-white/20 text-white'
-    }`}>
+    <div className="mt-4 p-5 rounded-md border border-white/15 bg-white/5 text-white space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-2 border-b border-white/10 pb-3">
-        <div className="flex items-center gap-2 font-bold text-sm text-emerald-300">
-          <PieChart className="w-4 h-4 text-emerald-400" />
-          <span>Interactive Visual Budget Breakdown</span>
+      <div className="flex items-center justify-between flex-wrap gap-2 border-b border-white/15 pb-3">
+        <div className="flex items-center gap-2 font-medium text-xs sm:text-sm text-[#F3785B]">
+          <PieChart className="w-4 h-4 text-[#E05A3A]" />
+          <span className="font-serif tracking-wide">Estimated Expenditure Breakdown</span>
         </div>
-        <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-200 border border-emerald-400/30">
-          SVG Chart Block
+        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-white/10 text-white font-medium border border-white/20">
+          Per Traveler
         </span>
       </div>
 
