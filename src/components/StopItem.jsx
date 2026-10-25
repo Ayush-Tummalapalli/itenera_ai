@@ -4,83 +4,39 @@ import { useState } from 'react';
 import { ChevronDown, ChevronUp, Trash2, ArrowUp, ArrowDown, MapPin, Clock, ExternalLink } from 'lucide-react';
 import { convertCurrencyString } from '@/lib/currencyConverter';
 
-const getCategoryStyle = (category, darkMode) => {
-  if (darkMode) {
-    const darkStyles = {
-      Sightseeing: 'bg-blue-950/80 text-blue-300 border-blue-800',
-      Food: 'bg-amber-950/80 text-amber-300 border-amber-800',
-      Culture: 'bg-purple-950/80 text-purple-300 border-purple-800',
-      Relaxation: 'bg-emerald-950/80 text-emerald-300 border-emerald-800',
-      Shopping: 'bg-pink-950/80 text-pink-300 border-pink-800',
-      Adventure: 'bg-orange-950/80 text-orange-300 border-orange-800',
-      General: 'bg-slate-800 text-slate-300 border-slate-700'
-    };
-    return darkStyles[category] || darkStyles.General;
-  } else {
-    const lightStyles = {
-      Sightseeing: 'bg-blue-50 text-blue-700 border-blue-200',
-      Food: 'bg-amber-50 text-amber-700 border-amber-200',
-      Culture: 'bg-purple-50 text-purple-700 border-purple-200',
-      Relaxation: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      Shopping: 'bg-pink-50 text-pink-700 border-pink-200',
-      Adventure: 'bg-orange-50 text-orange-700 border-orange-200',
-      General: 'bg-slate-50 text-slate-700 border-slate-200'
-    };
-    return lightStyles[category] || lightStyles.General;
-  }
-};
-
-export default function StopItem({ stop, isFirst, isLast, onMoveUp, onMoveDown, onDelete, destination, currency = 'USD', darkMode }) {
+export default function StopItem({ stop, isFirst, isLast, onMoveUp, onMoveDown, onDelete, destination, currency = 'USD' }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const categoryStyle = getCategoryStyle(stop.category, darkMode);
-  
   const mapSearchQuery = encodeURIComponent(`${stop.title} ${stop.location || ''} ${destination || ''}`.trim());
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapSearchQuery}`;
 
   const formattedCost = stop.estimatedCost ? convertCurrencyString(stop.estimatedCost, currency) : null;
 
   return (
-    <div className={`group rounded-xl border p-4 shadow-sm hover:shadow-md transition-all ${
-      darkMode
-        ? 'bg-slate-900/90 border-slate-800 hover:border-indigo-500/50'
-        : 'bg-white border-slate-100 hover:border-indigo-100'
-    }`}>
+    <div className="group rounded-lg border border-[#E8E1D5] bg-white p-4 sm:p-5 hover:border-[#E05A3A]/50 transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
       <div className="flex items-start justify-between gap-3">
         {/* Main Content Area */}
         <div className="flex-1 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
-          <div className="flex items-center gap-2 flex-wrap mb-1">
-            <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border flex items-center gap-1 ${
-              darkMode
-                ? 'bg-slate-800 text-slate-300 border-slate-700'
-                : 'bg-slate-50 text-slate-600 border-slate-200'
-            }`}>
-              <Clock className="w-3 h-3 text-slate-400" />
+          <div className="flex items-center gap-2 flex-wrap mb-1.5">
+            <span className="text-xs font-medium px-2 py-0.5 rounded border border-[#E8E1D5] bg-[#F7F4EC] text-[#526685] flex items-center gap-1">
+              <Clock className="w-3 h-3 text-[#526685]" />
               {stop.time}
             </span>
 
             {stop.category && (
-              <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full border ${categoryStyle}`}>
+              <span className="text-xs font-medium px-2 py-0.5 rounded border border-[#E8E1D5] bg-[#F7F4EC] text-[#162842]">
                 {stop.category}
               </span>
             )}
 
             {formattedCost && (
-              <span className={`text-xs font-bold px-2 py-0.5 rounded-full border flex items-center gap-0.5 ${
-                darkMode
-                  ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800'
-                  : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-              }`}>
+              <span className="text-xs font-semibold px-2 py-0.5 rounded border bg-[#FAECE8] text-[#E05A3A] border-[#E05A3A]/40">
                 {formattedCost}
               </span>
             )}
           </div>
 
-          <h4 className={`font-semibold text-base transition-colors flex items-center gap-2 ${
-            darkMode
-              ? 'text-slate-100 group-hover:text-indigo-400'
-              : 'text-slate-800 group-hover:text-indigo-600'
-          }`}>
+          <h4 className="font-semibold text-base text-[#162842] group-hover:text-[#E05A3A] transition-colors">
             {stop.title}
           </h4>
 
@@ -92,83 +48,69 @@ export default function StopItem({ stop, isFirst, isLast, onMoveUp, onMoveDown, 
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Open in Google Maps"
-                className={`inline-flex items-center gap-1 text-xs font-medium hover:underline ${
-                  darkMode ? 'text-indigo-400 hover:text-indigo-300' : 'text-indigo-600 hover:text-indigo-800'
-                }`}
+                className="inline-flex items-center gap-1 text-xs font-medium text-[#E05A3A] hover:underline"
               >
-                <MapPin className="w-3.5 h-3.5 text-indigo-500" />
+                <MapPin className="w-3.5 h-3.5 text-[#E05A3A]" />
                 <span>{stop.location}</span>
-                <ExternalLink className="w-3 h-3 text-indigo-400" />
+                <ExternalLink className="w-3 h-3 text-[#E05A3A]" />
               </a>
             </div>
           )}
         </div>
 
         {/* Action buttons: Reorder, Delete, Toggle Expand */}
-        <div className={`flex items-center gap-1 p-1 rounded-lg border ${
-          darkMode ? 'bg-slate-800 border-slate-700' : 'bg-slate-50 border-slate-100'
-        }`}>
+        <div className="flex items-center gap-0.5 p-1 rounded-md border border-[#E8E1D5] bg-[#F7F4EC]">
           <button
             onClick={() => onMoveUp(stop.id)}
             disabled={isFirst}
             title="Move Up"
-            className="p-1 text-slate-400 hover:text-indigo-500 disabled:opacity-30 disabled:hover:text-slate-400 transition-colors"
+            className="p-1 text-stone-400 hover:text-[#162842] disabled:opacity-20 transition-colors"
           >
-            <ArrowUp className="w-4 h-4" />
+            <ArrowUp className="w-3.5 h-3.5" />
           </button>
 
           <button
             onClick={() => onMoveDown(stop.id)}
             disabled={isLast}
             title="Move Down"
-            className="p-1 text-slate-400 hover:text-indigo-500 disabled:opacity-30 disabled:hover:text-slate-400 transition-colors"
+            className="p-1 text-stone-400 hover:text-[#162842] disabled:opacity-20 transition-colors"
           >
-            <ArrowDown className="w-4 h-4" />
+            <ArrowDown className="w-3.5 h-3.5" />
           </button>
 
           <button
             onClick={() => onDelete(stop.id)}
-            title="Remove Stop"
-            className="p-1 text-slate-400 hover:text-rose-500 transition-colors"
+            title="Remove Activity"
+            className="p-1 text-stone-400 hover:text-rose-600 transition-colors"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
 
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             title={isExpanded ? 'Collapse' : 'Expand'}
-            className={`p-1 text-slate-400 hover:text-indigo-500 transition-colors ml-1 border-l ${
-              darkMode ? 'border-slate-700' : 'border-slate-200'
-            }`}
+            className="p-1 text-stone-400 hover:text-[#162842] transition-colors ml-1 border-l border-[#E8E1D5]"
           >
-            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {isExpanded ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
         </div>
       </div>
 
       {/* Expanded Description Details */}
       {isExpanded && (
-        <div className={`mt-3 pt-3 border-t text-sm p-3 rounded-lg animate-fadeIn space-y-2 ${
-          darkMode
-            ? 'border-slate-800 bg-slate-800/50 text-slate-300'
-            : 'border-slate-100 bg-slate-50/50 text-slate-600'
-        }`}>
-          <p className="leading-relaxed">{stop.description}</p>
+        <div className="mt-3 pt-3 border-t border-[#E8E1D5] bg-[#F7F4EC]/60 text-[#3B4D66] text-sm p-3.5 rounded-md animate-fadeIn space-y-2.5">
+          <p className="leading-relaxed text-xs sm:text-sm">{stop.description}</p>
 
           <div className="pt-1">
             <a
               href={googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-lg transition-colors border ${
-                darkMode
-                  ? 'bg-slate-800 hover:bg-slate-700 text-indigo-300 border-slate-700'
-                  : 'bg-white hover:bg-indigo-50 text-indigo-700 border-slate-200'
-              }`}
+              className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md border border-[#E8E1D5] bg-white hover:bg-[#FAECE8] text-[#E05A3A] transition-colors shadow-xs"
             >
-              <MapPin className="w-3.5 h-3.5 text-indigo-500" />
-              <span>View Location on Google Maps</span>
-              <ExternalLink className="w-3 h-3 text-indigo-400" />
+              <MapPin className="w-3.5 h-3.5 text-[#E05A3A]" />
+              <span>Open in Google Maps</span>
+              <ExternalLink className="w-3 h-3 text-[#E05A3A]" />
             </a>
           </div>
         </div>
@@ -176,3 +118,4 @@ export default function StopItem({ stop, isFirst, isLast, onMoveUp, onMoveDown, 
     </div>
   );
 }
+

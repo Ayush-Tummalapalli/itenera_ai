@@ -6,9 +6,11 @@ import ItineraryView from '@/components/ItineraryView';
 import ErrorAlert from '@/components/ErrorAlert';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import SavedTripsDrawer from '@/components/SavedTripsDrawer';
+import Footer from '@/components/Footer';
+import LegalModal from '@/components/LegalModal';
 import { getMockItinerary } from '@/lib/mockItinerary';
 import { getSavedTrips, deleteSavedTrip } from '@/lib/tripStorage';
-import { Compass, Sun, Moon, BookmarkCheck } from 'lucide-react';
+import { Bookmark } from 'lucide-react';
 
 export default function Home() {
   const [itinerary, setItinerary] = useState(null);
@@ -16,15 +18,17 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [lastPrompt, setLastPrompt] = useState('');
   const [lastCompanion, setLastCompanion] = useState('Solo Traveler');
-  const [darkMode, setDarkMode] = useState(false);
   const [savedTrips, setSavedTrips] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [legalModalType, setLegalModalType] = useState(null);
 
   useEffect(() => {
-    // Load theme preference from localStorage
-    const savedTheme = localStorage.getItem('itinera_theme') || localStorage.getItem('flam_theme');
-    if (savedTheme === 'dark') {
-      setDarkMode(true);
+    // Purge any legacy dark mode keys to ensure user gets the clean Warm Ivory experience
+    try {
+      localStorage.removeItem('itinera_theme');
+      localStorage.removeItem('flam_theme');
+    } catch (e) {
+      // Ignore in non-browser or sandbox environments
     }
     // Load saved trips from localStorage
     setSavedTrips(getSavedTrips());
@@ -49,12 +53,6 @@ export default function Home() {
     setLastCompanion(companion);
     const demoData = getMockItinerary(promptText, null, companion);
     setItinerary(demoData);
-  };
-
-  const toggleDarkMode = () => {
-    const newMode = !darkMode;
-    setDarkMode(newMode);
-    localStorage.setItem('itinera_theme', newMode ? 'dark' : 'light');
   };
 
   const generateItinerary = async (prompt, companionType = 'Solo Traveler') => {
@@ -105,59 +103,35 @@ export default function Home() {
   };
 
   return (
-    <main className={`min-h-screen pb-16 font-sans transition-colors duration-300 ${
-      darkMode ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-800'
-    }`}>
-      {/* Top Header Navbar */}
-      <header className={`backdrop-blur-md border-b sticky top-0 z-40 transition-colors duration-300 ${
-        darkMode ? 'bg-slate-900/80 border-slate-800' : 'bg-white/80 border-slate-200/80'
-      }`}>
+    <div className="min-h-screen flex flex-col font-sans bg-[#FAF7F0] text-[#162842]">
+      {/* Editorial Masthead Header */}
+      <header className="border-b sticky top-0 z-40 bg-[#FAF7F0]/95 backdrop-blur-xs border-[#E8E1D5]">
         <div className="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/20">
-              <Compass className="w-5 h-5" />
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-md bg-[#162842] flex items-center justify-center text-[#FAF7F0] font-serif font-bold text-sm shadow-xs">
+              I
             </div>
             <div>
-              <h1 className={`font-extrabold text-lg leading-none ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-                Itinera AI
+              <h1 className="font-serif text-lg font-semibold tracking-wider leading-none uppercase text-[#162842]">
+                Itinera
               </h1>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-500">
-                AI Travel Planner
+              <span className="text-[10px] uppercase font-medium tracking-widest text-[#526685]">
+                Curated Field Planner
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* My Saved Trips Drawer Button */}
+            {/* Saved Itineraries Drawer Trigger in Coral Orange */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className={`p-2 sm:px-3 sm:py-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                darkMode
-                  ? 'bg-slate-800 border-slate-700 text-indigo-300 hover:bg-slate-700'
-                  : 'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100'
-              }`}
+              className="px-3.5 py-1.5 rounded-md border border-[#E05A3A]/40 bg-white text-[#E05A3A] hover:bg-[#FAECE8] text-xs font-semibold flex items-center gap-2 transition-colors shadow-xs"
             >
-              <BookmarkCheck className="w-4 h-4 text-indigo-500" />
-              <span className="hidden sm:inline">My Saved Trips</span>
-              {savedTrips.length > 0 && (
-                <span className="w-4 h-4 rounded-full bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center">
-                  {savedTrips.length}
-                </span>
-              )}
-            </button>
-
-            {/* Theme Toggle Button */}
-            <button
-              onClick={toggleDarkMode}
-              title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              className={`p-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                darkMode
-                  ? 'bg-slate-800 border-slate-700 text-amber-300 hover:bg-slate-700'
-                  : 'bg-slate-100 border-slate-200 text-indigo-600 hover:bg-slate-200'
-              }`}
-            >
-              {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-600" />}
-              <span className="hidden sm:inline">{darkMode ? 'Light' : 'Dark'}</span>
+              <Bookmark className="w-3.5 h-3.5 text-[#E05A3A]" />
+              <span className="hidden sm:inline">Saved Itineraries</span>
+              <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-[#E05A3A] text-white">
+                {savedTrips.length}
+              </span>
             </button>
           </div>
         </div>
@@ -170,19 +144,21 @@ export default function Home() {
         savedTrips={savedTrips}
         onLoadTrip={handleLoadSavedTrip}
         onDeleteTrip={handleDeleteSavedTrip}
-        darkMode={darkMode}
       />
 
       {/* Main Container */}
-      <div className="max-w-4xl mx-auto px-4 pt-8 space-y-6">
+      <main className="flex-1 max-w-4xl mx-auto px-4 pt-10 sm:pt-14 pb-12 w-full space-y-8">
         {/* Intro Tagline */}
         {!itinerary && !isLoading && (
-          <div className="text-center max-w-xl mx-auto space-y-2 mb-6">
-            <h2 className={`text-3xl font-extrabold tracking-tight ${darkMode ? 'text-white' : 'text-slate-900'}`}>
-              Plan Your Next Adventure in Seconds
+          <div className="max-w-2xl space-y-3 mb-2">
+            <span className="text-[11px] uppercase tracking-widest font-semibold text-[#526685]">
+              Bespoke Travel Dossiers
+            </span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-normal tracking-tight text-[#162842]">
+              Plan your journey with intentional clarity.
             </h2>
-            <p className={`text-sm leading-relaxed ${darkMode ? 'text-slate-400' : 'text-slate-500'}`}>
-              Describe your destination, trip length, or vibe. Itinera AI generates an interactive day-by-day itinerary tailored to your travel companions.
+            <p className="text-sm leading-relaxed text-[#526685] max-w-xl">
+              Specify your destination, pace, and travel party. Itinera formats an authentic day-by-day field guide tailored to your budget and interests.
             </p>
           </div>
         )}
@@ -192,7 +168,6 @@ export default function Home() {
           onSubmit={generateItinerary}
           onInstantDemo={handleInstantDemo}
           isLoading={isLoading}
-          darkMode={darkMode}
         />
 
         {/* Error State */}
@@ -204,20 +179,30 @@ export default function Home() {
           />
         )}
 
-        {/* Loading State */}
-        {isLoading && <LoadingSkeleton darkMode={darkMode} />}
+        {/* Loading State for Generating Itinerary */}
+        {isLoading && <LoadingSkeleton />}
 
         {/* Generated Itinerary Display */}
         {itinerary && !isLoading && (
           <ItineraryView
             itinerary={itinerary}
-            darkMode={darkMode}
             onUpdateItinerary={setItinerary}
             onReset={() => setItinerary(null)}
             onTripSaved={refreshSavedTrips}
           />
         )}
-      </div>
-    </main>
+      </main>
+
+      {/* Structured Legal & Editorial Footer */}
+      <Footer onOpenLegal={(type) => setLegalModalType(type)} />
+
+      {/* Legal Documentation Modal */}
+      <LegalModal
+        isOpen={Boolean(legalModalType)}
+        onClose={() => setLegalModalType(null)}
+        type={legalModalType}
+      />
+    </div>
   );
 }
+

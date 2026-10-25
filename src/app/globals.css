@@ -1,11 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --canvas-bg: #FAF7F0;
+    --canvas-text: #162842;
+  }
+
+  body {
+    background-color: var(--canvas-bg);
+    color: var(--canvas-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Accessible focus styling */
+  :focus-visible {
+    outline: 2px solid #E05A3A;
+    outline-offset: 2px;
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
@@ -14,19 +36,30 @@
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Print Styles for Exporting Clean PDF */
 @media print {
   body {
     background-color: #ffffff !important;
-    color: #000000 !important;
+    color: #111111 !important;
   }
 
   header,
   form,
   button,
+  footer,
   .no-print {
     display: none !important;
   }
@@ -46,13 +79,7 @@
   }
 
   .border {
-    border-color: #e2e8f0 !important;
-  }
-
-  .bg-gradient-to-br {
-    background: #1e1b4b !important;
-    color: #ffffff !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    border-color: #d1d5db !important;
   }
 }
+

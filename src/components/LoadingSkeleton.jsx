@@ -1,34 +1,28 @@
 'use client';
 
+import { Compass } from 'lucide-react';
+
 export default function LoadingSkeleton() {
   return (
-    <div className="space-y-6 animate-pulse">
-      {/* Banner Skeleton */}
-      <div className="bg-slate-200 h-44 rounded-2xl w-full" />
+    <div className="rounded-lg border border-[#E8E1D5] bg-white p-8 sm:p-12 text-center space-y-4 animate-fadeIn text-[#162842] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+      <div className="w-12 h-12 rounded-md bg-[#FAECE8] text-[#E05A3A] flex items-center justify-center mx-auto border border-[#E05A3A]/40 shadow-xs">
+        <Compass className="w-6 h-6 animate-spin" style={{ animationDuration: '3s' }} />
+      </div>
 
-      {/* Day Cards Skeleton */}
-      <div className="space-y-4">
-        <div className="bg-white border border-slate-100 rounded-2xl p-5 space-y-3 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-slate-200 rounded-xl" />
-            <div className="h-5 bg-slate-200 rounded w-1/3" />
-          </div>
-          <div className="space-y-2 pt-2">
-            <div className="h-16 bg-slate-100 rounded-xl w-full" />
-            <div className="h-16 bg-slate-100 rounded-xl w-full" />
-          </div>
-        </div>
+      <div className="space-y-1.5 max-w-md mx-auto">
+        <h3 className="font-serif text-xl font-semibold text-[#162842]">
+          Formulating Your Field Dossier
+        </h3>
+        <p className="text-xs sm:text-sm text-[#526685] leading-relaxed">
+          Synthesizing daily timing, local transit routes, companion considerations, and expenditure estimates...
+        </p>
+      </div>
 
-        <div className="bg-white border border-slate-100 rounded-2xl p-5 space-y-3 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-slate-200 rounded-xl" />
-            <div className="h-5 bg-slate-200 rounded w-1/4" />
-          </div>
-          <div className="space-y-2 pt-2">
-            <div className="h-16 bg-slate-100 rounded-xl w-full" />
-          </div>
-        </div>
+      <div className="pt-2 flex justify-center items-center gap-2 text-[11px] text-[#E05A3A] font-semibold tracking-wider uppercase">
+        <span className="w-1.5 h-1.5 rounded-full bg-[#E05A3A] animate-ping" />
+        <span>Curating Authentic Highlights</span>
       </div>
     </div>
   );
 }
+
