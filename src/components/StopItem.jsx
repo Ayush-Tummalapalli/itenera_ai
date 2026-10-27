@@ -13,7 +13,7 @@ export default function StopItem({ stop, isFirst, isLast, onMoveUp, onMoveDown, 
   const formattedCost = stop.estimatedCost ? convertCurrencyString(stop.estimatedCost, currency) : null;
 
   return (
-    <div className="group rounded-lg border border-[#E8E1D5] bg-white p-4 sm:p-5 hover:border-[#E05A3A]/50 transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+    <div className="group rounded-lg border border-[#E8E1D5] bg-[#FDFBF7] p-4 sm:p-5 hover:border-[#E05A3A]/50 transition-colors">
       <div className="flex items-start justify-between gap-3">
         {/* Main Content Area */}
         <div className="flex-1 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
@@ -106,7 +106,7 @@ export default function StopItem({ stop, isFirst, isLast, onMoveUp, onMoveDown, 
               href={googleMapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md border border-[#E8E1D5] bg-white hover:bg-[#FAECE8] text-[#E05A3A] transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-md border border-[#E8E1D5] bg-[#FDFBF7] hover:bg-[#FAECE8] text-[#E05A3A] transition-colors"
             >
               <MapPin className="w-3.5 h-3.5 text-[#E05A3A]" />
               <span>Open in Google Maps</span>

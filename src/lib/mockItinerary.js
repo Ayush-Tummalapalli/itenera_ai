@@ -2,9 +2,15 @@
  * Dynamic Smart Itinerary Generator with Rich Real-World Locations, Packing Checklist, Companion Filters, Per-Pax Budget & Weather Advisor.
  */
 
-export function getMockItinerary(userPrompt, targetBudget = null, companionType = 'Solo Traveler') {
+export function getMockItinerary(userPrompt, targetBudget = null, companionType = 'Solo Traveler', preferences = {}) {
   const prompt = userPrompt || 'Travel trip';
   const promptLower = prompt.toLowerCase();
+  
+  const tripPreferences = {
+    pace: preferences?.pace || 'Balanced',
+    dietary: preferences?.dietary || 'None',
+    interests: Array.isArray(preferences?.interests) ? preferences.interests : []
+  };
   
   let destination = 'Tokyo, Japan';
   let weatherAdvisor = {
@@ -30,7 +36,24 @@ export function getMockItinerary(userPrompt, targetBudget = null, companionType 
     { title: 'TeamLab Planets Immersive Digital Art', category: 'Culture', location: 'Toyosu, Tokyo', cost: '$25 - $32' }
   ];
 
-  if (promptLower.includes('rome') || promptLower.includes('italy')) {
+  if (promptLower.includes('kerala')) {
+    destination = 'Kerala, India';
+    weatherAdvisor = {
+      bestSeason: 'September to March (Pleasant Backwaters & Lush Hills)',
+      averageTemp: '27°C / 81°F',
+      packingTip: 'Light cotton wear, mosquito repellent, umbrella & slip-on sandals.'
+    };
+    packingChecklist.clothing = ['Breathable Cotton Shirts & Pants', 'Light Rain Jacket or Umbrella', 'Comfortable Walking Sandals'];
+    packingChecklist.essentials.push('Mosquito & Bug Spray', 'Sunscreen Lotion', 'Binoculars for Nature Trails');
+    cityStops = [
+      { title: 'Alleppey Backwaters Houseboat Cruise & Lagoon Sunset', category: 'Relaxation', location: 'Alleppey Backwaters, Kerala', cost: '$35 - $60' },
+      { title: 'Authentic Kerala Sadya Lunch on Banana Leaf', category: 'Food', location: 'Heritage Quarter, Kochi', cost: '$6 - $12' },
+      { title: 'Munnar Tea Plantations & Mattupetty Viewpoint', category: 'Sightseeing', location: 'Munnar Hills, Kerala', cost: '$10 - $18' },
+      { title: 'Fort Kochi Chinese Fishing Nets & Heritage Stroll', category: 'Culture', location: 'Fort Kochi, Kerala', cost: 'Free' },
+      { title: 'Periyar Wildlife Sanctuary Boat Safari & Spice Garden', category: 'Adventure', location: 'Thekkady, Kerala', cost: '$15 - $25' },
+      { title: 'Varkala Red Cliff Beach & Arabian Sea Sunset', category: 'Relaxation', location: 'Varkala Beach, Kerala', cost: 'Free' }
+    ];
+  } else if (promptLower.includes('rome') || promptLower.includes('italy')) {
     destination = 'Rome, Italy';
     weatherAdvisor = {
       bestSeason: 'April-June & September-October',
@@ -47,7 +70,7 @@ export function getMockItinerary(userPrompt, targetBudget = null, companionType 
       { title: 'Authentic Gelato Tasting at Giolitti', category: 'Food', location: 'Near Pantheon, Rome', cost: '$5 - $8' },
       { title: 'Pantheon Monument & Sunset Aperitivo', category: 'Relaxation', location: 'Piazza della Rotonda, Rome', cost: '$10 - $18' }
     ];
-  } else if (promptLower.includes('goa') || promptLower.includes('india')) {
+  } else if (promptLower.includes('goa')) {
     destination = 'Goa, India';
     weatherAdvisor = {
       bestSeason: 'November to February (Pleasant Sea Breeze)',
@@ -106,6 +129,22 @@ export function getMockItinerary(userPrompt, targetBudget = null, companionType 
       { title: 'Central Park Walk & Bethesda Terrace', category: 'Relaxation', location: 'Central Park, New York', cost: 'Free' },
       { title: 'Times Square & Broadway Theater District', category: 'Culture', location: 'Times Square, New York', cost: 'Free' }
     ];
+  } else if (promptLower.includes('tokyo') || promptLower.includes('japan')) {
+    destination = 'Tokyo, Japan';
+  } else {
+    // Dynamic destination extractor for any custom location
+    const cleanedDestination = prompt
+      .replace(/\b(\d+\s*days?|weekend|getaway|trip|vacation|budget|under|\$\d+|in|to|for|with)\b/gi, '')
+      .trim();
+    if (cleanedDestination.length > 2) {
+      destination = cleanedDestination.charAt(0).toUpperCase() + cleanedDestination.slice(1);
+      cityStops = [
+        { title: `${destination} Landmark Highlights & Orientation`, category: 'Sightseeing', location: destination, cost: '$15 - $25' },
+        { title: `Authentic Regional Dining in ${destination}`, category: 'Food', location: `${destination} Old Town`, cost: '$12 - $22' },
+        { title: `${destination} Cultural Heritage & Historic Walk`, category: 'Culture', location: `${destination} Center`, cost: 'Free' },
+        { title: `Scenic Scenic Viewpoint & Promenade`, category: 'Relaxation', location: destination, cost: 'Free' }
+      ];
+    }
   }
 
   // Extract duration
@@ -141,11 +180,11 @@ export function getMockItinerary(userPrompt, targetBudget = null, companionType 
     const s1 = cityStops[(i - 1) * 2 % cityStops.length];
     const s2 = cityStops[((i - 1) * 2 + 1) % cityStops.length];
 
-    const dayStops = [
+    let dayStops = [
       {
         id: `stop-${i}-1`,
         title: s1.title,
-        time: '09:30 AM - 12:30 PM',
+        time: tripPreferences.pace === 'Relaxed' ? '10:00 AM - 01:00 PM' : '09:00 AM - 11:30 AM',
         description: `Explore the vibrant culture and famous sights at ${s1.location}.`,
         category: s1.category,
         location: s1.location,
@@ -153,14 +192,21 @@ export function getMockItinerary(userPrompt, targetBudget = null, companionType 
       },
       {
         id: `stop-${i}-2`,
-        title: s2.title,
-        time: '01:00 PM - 03:30 PM',
-        description: `Enjoy authentic food and regional highlights around ${s2.location}.`,
-        category: s2.category,
+        title: tripPreferences.dietary !== 'None' 
+          ? `Curated ${tripPreferences.dietary} Dining Experience (${s2.title.split(' ')[0]})`
+          : s2.title,
+        time: tripPreferences.pace === 'Relaxed' ? '01:30 PM - 03:30 PM' : '12:00 PM - 02:00 PM',
+        description: tripPreferences.dietary !== 'None'
+          ? `Savor authentic ${tripPreferences.dietary.toLowerCase()}-friendly local delicacies and regional specialties near ${s2.location}.`
+          : `Enjoy authentic food and regional highlights around ${s2.location}.`,
+        category: 'Food',
         location: s2.location,
         estimatedCost: s2.cost
-      },
-      {
+      }
+    ];
+
+    if (tripPreferences.pace !== 'Relaxed') {
+      dayStops.push({
         id: `stop-${i}-3`,
         title: `${destination.split(',')[0]} Evening Promenade & Local Vibe`,
         time: '06:00 PM - 08:30 PM',
@@ -168,8 +214,20 @@ export function getMockItinerary(userPrompt, targetBudget = null, companionType 
         category: 'Relaxation',
         location: destination,
         estimatedCost: 'Free'
-      }
-    ];
+      });
+    }
+
+    if (tripPreferences.pace === 'Packed') {
+      dayStops.push({
+        id: `stop-${i}-4`,
+        title: `Night Vista & Cultural Discovery`,
+        time: '09:00 PM - 10:30 PM',
+        description: `Experience the vibrant night skyline and after-hours energy of ${destination}.`,
+        category: 'Culture',
+        location: destination,
+        estimatedCost: '$10 - $20'
+      });
+    }
 
     days.push({
       dayNumber: i,
@@ -178,13 +236,21 @@ export function getMockItinerary(userPrompt, targetBudget = null, companionType 
     });
   }
 
+  const prefSummaryParts = [];
+  if (tripPreferences.pace) prefSummaryParts.push(`${tripPreferences.pace} Pace`);
+  if (tripPreferences.dietary && tripPreferences.dietary !== 'None') prefSummaryParts.push(`${tripPreferences.dietary} Cuisine`);
+  if (tripPreferences.interests && tripPreferences.interests.length > 0) prefSummaryParts.push(tripPreferences.interests.slice(0, 2).join(' & '));
+
+  const prefSnippet = prefSummaryParts.length > 0 ? ` with ${prefSummaryParts.join(', ')}` : '';
+
   return {
     isMock: true,
     tripTitle: `${daysCount}-Day ${destination} Experience`,
     destination: destination,
     duration: `${daysCount} Days`,
-    summary: `A customized ${daysCount}-day itinerary for ${companionType} exploring the top landmarks, dining, and sights of ${destination}.`,
+    summary: `A customized ${daysCount}-day itinerary for ${companionType}${prefSnippet} exploring the top landmarks, dining, and sights of ${destination}.`,
     companionType: companionType,
+    preferences: tripPreferences,
     estimatedBudgetPerPax: `$${estimatedTotalPerPax} / person`,
     budgetBreakdown: {
       stay: `$${Math.round(estimatedTotalPerPax * 0.45)}`,

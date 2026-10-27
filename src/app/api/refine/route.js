@@ -2,10 +2,11 @@ import { validateAndCleanItinerary } from '@/lib/schemaValidator';
 import { getMockItinerary } from '@/lib/mockItinerary';
 
 const GEMINI_MODELS = [
-  'gemini-flash-lite-latest',
-  'gemini-2.5-flash-lite',
+  'gemini-1.5-flash',
+  'gemini-2.0-flash',
   'gemini-2.5-flash',
-  'gemini-3.6-flash'
+  'gemini-3.8-flash',
+  'gemini-1.5-pro'
 ];
 
 async function callGeminiWithFallback(apiKey, systemInstructions, userPrompt) {
@@ -14,11 +15,15 @@ async function callGeminiWithFallback(apiKey, systemInstructions, userPrompt) {
   for (const modelId of GEMINI_MODELS) {
     try {
       console.log(`Calling Official Gemini API refine with model: ${modelId}`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey.trim()}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
           body: JSON.stringify({
             contents: [
               {
@@ -33,6 +38,8 @@ async function callGeminiWithFallback(apiKey, systemInstructions, userPrompt) {
           })
         }
       );
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
@@ -75,7 +82,8 @@ export async function POST(req) {
       );
     }
 
-    const geminiKey = process.env.GEMINI_API_KEY;
+    const headerKey = req.headers.get('x-gemini-key');
+    const geminiKey = headerKey || body.apiKey || process.env.GEMINI_API_KEY;
 
     const systemInstructions = `
 You are an expert travel planner assistant.

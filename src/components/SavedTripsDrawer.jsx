@@ -10,12 +10,12 @@ export default function SavedTripsDrawer({ isOpen, onClose, savedTrips, onLoadTr
       {/* Backdrop */}
       <div 
         onClick={onClose}
-        className="absolute inset-0 bg-[#162842]/40 backdrop-blur-xs transition-opacity" 
+        className="absolute inset-0 bg-[#162842]/60 transition-opacity" 
       />
 
       {/* Side Drawer Modal */}
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md border-l shadow-2xl flex flex-col bg-[#FAF7F0] border-[#E8E1D5] text-[#162842]">
+        <div className="w-screen max-w-md border-l flex flex-col bg-[#FAF7F0] border-[#E8E1D5] text-[#162842]">
           
           {/* Header */}
           <div className="p-5 border-b border-[#E8E1D5] bg-[#F7F4EC] flex items-center justify-between">
@@ -34,7 +34,7 @@ export default function SavedTripsDrawer({ isOpen, onClose, savedTrips, onLoadTr
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-md border bg-white border-[#E8E1D5] hover:bg-[#F3EFE6] text-[#162842] transition-colors"
+              className="p-1.5 rounded-md border bg-[#FDFBF7] border-[#E8E1D5] hover:bg-[#F3EFE6] text-[#162842] transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -56,7 +56,7 @@ export default function SavedTripsDrawer({ isOpen, onClose, savedTrips, onLoadTr
               savedTrips.map((trip) => (
                 <div
                   key={trip.savedId}
-                  className="p-4 rounded-lg border bg-white border-[#E8E1D5] hover:border-[#E05A3A]/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)] space-y-3 transition-colors"
+                  className="p-4 rounded-lg border bg-[#FDFBF7] border-[#E8E1D5] hover:border-[#E05A3A]/60 space-y-3 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
@@ -100,7 +100,7 @@ export default function SavedTripsDrawer({ isOpen, onClose, savedTrips, onLoadTr
                         onLoadTrip(trip);
                         onClose();
                       }}
-                      className="px-3.5 py-1.5 bg-[#E05A3A] hover:bg-[#C94A2D] text-white text-xs font-semibold rounded-md flex items-center gap-1.5 transition-colors shadow-xs"
+                      className="px-3.5 py-1.5 bg-[#E05A3A] hover:bg-[#C94A2D] text-white text-xs font-semibold rounded-md flex items-center gap-1.5 transition-colors"
                     >
                       <span>Load Dossier</span>
                       <ArrowRight className="w-3.5 h-3.5" />

@@ -56,11 +56,11 @@ export default function DayCard({ day, destination, currency, onUpdateStops }) {
   };
 
   return (
-    <div className="rounded-lg border border-[#E8E1D5] bg-white p-5 sm:p-6 space-y-5 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+    <div className="rounded-lg border border-[#E8E1D5] bg-[#FDFBF7] p-5 sm:p-6 space-y-5">
       {/* Day Header */}
       <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-3.5">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-md font-serif font-bold flex items-center justify-center text-sm bg-[#162842] text-[#FAF7F0] shadow-xs">
+          <div className="w-8 h-8 rounded-md font-serif font-bold flex items-center justify-center text-sm bg-[#162842] text-[#FAF7F0]">
             {day.dayNumber}
           </div>
           <div>
@@ -92,7 +92,7 @@ export default function DayCard({ day, destination, currency, onUpdateStops }) {
               placeholder="Activity / Place title *"
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
-              className="px-3 py-2 text-xs rounded-md outline-none focus:border-[#E05A3A] border border-[#E8E1D5] bg-white text-[#162842]"
+              className="px-3 py-2 text-xs rounded-md outline-none focus:border-[#E05A3A] border border-[#E8E1D5] bg-[#FDFBF7] text-[#162842]"
               required
             />
             <input
@@ -100,14 +100,14 @@ export default function DayCard({ day, destination, currency, onUpdateStops }) {
               placeholder="Time (e.g., 02:00 PM)"
               value={newTime}
               onChange={(e) => setNewTime(e.target.value)}
-              className="px-3 py-2 text-xs rounded-md outline-none focus:border-[#E05A3A] border border-[#E8E1D5] bg-white text-[#162842]"
+              className="px-3 py-2 text-xs rounded-md outline-none focus:border-[#E05A3A] border border-[#E8E1D5] bg-[#FDFBF7] text-[#162842]"
             />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <select
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
-              className="px-3 py-2 text-xs rounded-md outline-none focus:border-[#E05A3A] border border-[#E8E1D5] bg-white text-[#162842]"
+              className="px-3 py-2 text-xs rounded-md outline-none focus:border-[#E05A3A] border border-[#E8E1D5] bg-[#FDFBF7] text-[#162842]"
             >
               <option value="Sightseeing">Sightseeing</option>
               <option value="Food">Food & Dining</option>
@@ -121,7 +121,7 @@ export default function DayCard({ day, destination, currency, onUpdateStops }) {
               placeholder="Short description / tips"
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
-              className="px-3 py-2 text-xs rounded-md outline-none focus:border-[#E05A3A] border border-[#E8E1D5] bg-white text-[#162842]"
+              className="px-3 py-2 text-xs rounded-md outline-none focus:border-[#E05A3A] border border-[#E8E1D5] bg-[#FDFBF7] text-[#162842]"
             />
           </div>
           <div className="flex justify-end gap-2 pt-1">
@@ -134,7 +134,7 @@ export default function DayCard({ day, destination, currency, onUpdateStops }) {
             </button>
             <button
               type="submit"
-              className="px-4 py-1.5 bg-[#E05A3A] text-white text-xs font-semibold rounded-md hover:bg-[#C94A2D] transition-colors shadow-xs"
+              className="px-4 py-1.5 bg-[#E05A3A] text-white text-xs font-semibold rounded-md hover:bg-[#C94A2D] transition-colors"
             >
               Save Stop
             </button>

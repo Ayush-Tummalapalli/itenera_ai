@@ -1,7 +1,8 @@
 import './globals.css';
+import 'leaflet/dist/leaflet.css';
 
 export const metadata = {
-  title: 'Itinera — Curated Travel Itinerary & Field Planner',
+  title: 'Itinera: Curated Travel Itinerary & Field Planner',
   description: 'Bespoke, human-centered travel itineraries and daily field dossiers tailored to your travel companions and budget.',
 };
 

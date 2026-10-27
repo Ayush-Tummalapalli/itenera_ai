@@ -143,9 +143,9 @@ export default function BudgetChart({ budgetBreakdown, currency = 'USD' }) {
                 key={seg.id}
                 onMouseEnter={() => setActiveSegment(seg.id)}
                 onMouseLeave={() => setActiveSegment(null)}
-                className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                className={`p-3 rounded-md border transition-colors cursor-pointer flex items-center justify-between gap-3 ${
                   isHovered
-                    ? 'bg-white/20 border-white/40 scale-[1.02] shadow-md'
+                    ? 'bg-white/20 border-white/40'
                     : 'bg-white/5 border-white/10 hover:bg-white/10'
                 }`}
               >

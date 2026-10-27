@@ -22,7 +22,7 @@ export default function ErrorAlert({ message, onRetry, onUseMock }) {
       <div className="flex flex-wrap gap-2 pt-2 border-t border-[#E05A3A]/20">
         <button
           onClick={onRetry}
-          className="px-4 py-2 bg-[#E05A3A] hover:bg-[#C94A2D] text-white text-xs font-semibold rounded-md flex items-center gap-1.5 transition-colors shadow-xs"
+          className="px-4 py-2 bg-[#E05A3A] hover:bg-[#C94A2D] text-white text-xs font-semibold rounded-md flex items-center gap-1.5 transition-colors"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Retry Generation</span>
@@ -31,7 +31,7 @@ export default function ErrorAlert({ message, onRetry, onUseMock }) {
         {onUseMock && (
           <button
             onClick={onUseMock}
-            className="px-4 py-2 bg-white hover:bg-[#F7F4EC] text-[#162842] border border-[#E8E1D5] text-xs font-semibold rounded-md flex items-center gap-1.5 transition-colors"
+            className="px-4 py-2 bg-[#FDFBF7] hover:bg-[#F7F4EC] text-[#162842] border border-[#E8E1D5] text-xs font-semibold rounded-md flex items-center gap-1.5 transition-colors"
           >
             <Compass className="w-3.5 h-3.5 text-[#E05A3A]" />
             <span>Load Curated Sample Archive</span>

@@ -2,10 +2,11 @@ import { validateAndCleanItinerary } from '@/lib/schemaValidator';
 import { getMockItinerary } from '@/lib/mockItinerary';
 
 const GEMINI_MODELS = [
-  'gemini-flash-lite-latest',
-  'gemini-2.5-flash-lite',
+  'gemini-1.5-flash',
+  'gemini-2.0-flash',
   'gemini-2.5-flash',
-  'gemini-3.6-flash'
+  'gemini-3.8-flash',
+  'gemini-1.5-pro'
 ];
 
 async function callGeminiWithFallback(apiKey, systemInstructions, userPrompt) {
@@ -14,11 +15,15 @@ async function callGeminiWithFallback(apiKey, systemInstructions, userPrompt) {
   for (const modelId of GEMINI_MODELS) {
     try {
       console.log(`Calling Official Gemini API with model: ${modelId}`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey.trim()}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
           body: JSON.stringify({
             contents: [
               {
@@ -33,6 +38,8 @@ async function callGeminiWithFallback(apiKey, systemInstructions, userPrompt) {
           })
         }
       );
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
@@ -55,11 +62,19 @@ async function callGeminiWithFallback(apiKey, systemInstructions, userPrompt) {
 export async function POST(req) {
   let userPrompt = '';
   let companionType = 'Solo Traveler';
+  let preferences = { pace: 'Balanced', dietary: 'None', interests: [] };
 
   try {
     const body = await req.json();
     userPrompt = body.prompt || '';
     companionType = body.companionType || 'Solo Traveler';
+    if (body.preferences && typeof body.preferences === 'object') {
+      preferences = {
+        pace: body.preferences.pace || 'Balanced',
+        dietary: body.preferences.dietary || 'None',
+        interests: Array.isArray(body.preferences.interests) ? body.preferences.interests : []
+      };
+    }
 
     if (!userPrompt || typeof userPrompt !== 'string' || userPrompt.trim() === '') {
       return Response.json(
@@ -68,18 +83,40 @@ export async function POST(req) {
       );
     }
 
-    const geminiKey = process.env.GEMINI_API_KEY;
+    const headerKey = req.headers.get('x-gemini-key');
+    const geminiKey = headerKey || body.apiKey || process.env.GEMINI_API_KEY;
+
+    const dietaryInstruction = preferences.dietary && preferences.dietary !== 'None'
+      ? `CRITICAL DIETARY REQUIREMENT: The user strictly follows a "${preferences.dietary}" diet. ALL food stops, dining recommendations, and meal highlights MUST be strictly ${preferences.dietary}-friendly.`
+      : '';
+
+    const paceInstruction = preferences.pace === 'Relaxed'
+      ? 'TRAVEL PACE: Relaxed. Include only 2-3 stops per day with spacious time windows.'
+      : preferences.pace === 'Packed'
+      ? 'TRAVEL PACE: Fast-Paced / Packed. Include 4-5 energetic stops per day covering extensive ground.'
+      : 'TRAVEL PACE: Balanced. Include 3-4 well-paced stops per day.';
+
+    const interestsInstruction = preferences.interests && preferences.interests.length > 0
+      ? `CORE INTERESTS: Heavily prioritize stops matching: ${preferences.interests.join(', ')}.`
+      : '';
 
     const systemInstructions = `
 You are an expert travel planner assistant.
 Generate a realistic, day-by-day travel itinerary based on the user request in JSON format.
 
+USER TRAVEL CUSTOMIZATIONS:
+- Companion Type: "${companionType}"
+- ${paceInstruction}
+- ${dietaryInstruction}
+- ${interestsInstruction}
+
 REQUIRED SCHEMAS & FEATURES:
 1. Include "companionType": "${companionType}".
-2. Estimate total budget per person in USD (estimatedBudgetPerPax, budgetBreakdown: stay, food, activities).
-3. If user requests an unrealistically low budget (under $30/day), set isBudgetTooLow: true and budgetWarning string.
-4. Provide a "weatherAdvisor" object (bestSeason, averageTemp, packingTip).
-5. Provide a destination & weather tailored "packingChecklist" object:
+2. Include "preferences": ${JSON.stringify(preferences)}.
+3. Estimate total budget per person in USD (estimatedBudgetPerPax, budgetBreakdown: stay, food, activities).
+4. If user requests an unrealistically low budget (under $30/day), set isBudgetTooLow: true and budgetWarning string.
+5. Provide a "weatherAdvisor" object (bestSeason, averageTemp, packingTip).
+6. Provide a destination & weather tailored "packingChecklist" object:
    - "documents": Array of strings (e.g., ["Passport & Visas", "Travel Insurance Policy"])
    - "clothing": Array of strings (e.g., ["Linen shirts", "Walking sneakers", "Swimwear"])
    - "electronics": Array of strings (e.g., ["Universal Adapter", "Power Bank", "Camera Charger"])
@@ -92,6 +129,11 @@ Required JSON Schema:
   "duration": "X Days",
   "summary": "Short 2-sentence summary",
   "companionType": "${companionType}",
+  "preferences": {
+    "pace": "${preferences.pace}",
+    "dietary": "${preferences.dietary}",
+    "interests": ${JSON.stringify(preferences.interests)}
+  },
   "estimatedBudgetPerPax": "$XXX / person",
   "budgetBreakdown": {
     "stay": "$XXX",
@@ -146,7 +188,7 @@ Return ONLY raw JSON object.
 
     if (!responseText) {
       console.warn('Gemini API key missing or API call failed. Returning zero-crash fallback mock data.');
-      const mockData = getMockItinerary(userPrompt || 'Custom Trip', null, companionType);
+      const mockData = getMockItinerary(userPrompt || 'Custom Trip', null, companionType, preferences);
       return Response.json({ success: true, data: mockData });
     }
 
@@ -168,7 +210,7 @@ Return ONLY raw JSON object.
 
   } catch (error) {
     console.error('API Generation Error:', error.message);
-    const mockData = getMockItinerary(userPrompt || 'Custom Trip', null, companionType);
+    const mockData = getMockItinerary(userPrompt || 'Custom Trip', null, companionType, preferences);
     return Response.json({
       success: true,
       data: mockData,

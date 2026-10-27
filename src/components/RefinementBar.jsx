@@ -41,7 +41,7 @@ export default function RefinementBar({ onRefine, isRefining }) {
   };
 
   return (
-    <div className="border border-[#E8E1D5] bg-white rounded-lg p-5 sm:p-6 space-y-4 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+    <div className="border border-[#E8E1D5] bg-[#FDFBF7] rounded-lg p-5 sm:p-6 space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2 text-[#162842] font-semibold text-sm">
           <Sliders className="w-4 h-4 text-[#E05A3A]" />
@@ -103,7 +103,7 @@ export default function RefinementBar({ onRefine, isRefining }) {
           <button
             type="submit"
             disabled={(!instruction.trim() && !targetBudget.trim()) || isRefining}
-            className="px-5 py-2 bg-[#E05A3A] hover:bg-[#C94A2D] text-white font-semibold text-xs rounded-md shadow-xs flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
+            className="px-5 py-2 bg-[#E05A3A] hover:bg-[#C94A2D] text-white font-semibold text-xs rounded-md flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
           >
             {isRefining ? (
               <>
