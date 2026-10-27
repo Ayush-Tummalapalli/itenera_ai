@@ -4,9 +4,9 @@
  */
 
 export const CURRENCIES = {
-  USD: { code: 'USD', symbol: '$', rate: 1.0, flag: '🇺🇸', name: 'USD ($)' },
-  INR: { code: 'INR', symbol: '₹', rate: 84.0, flag: '🇮🇳', name: 'INR (₹)' },
-  EUR: { code: 'EUR', symbol: '€', rate: 0.92, flag: '🇪🇺', name: 'EUR (€)' },
+  USD: { code: 'USD', symbol: '$', rate: 1.0, flag: '', name: 'USD ($)' },
+  INR: { code: 'INR', symbol: '₹', rate: 84.0, flag: '', name: 'INR (₹)' },
+  EUR: { code: 'EUR', symbol: '€', rate: 0.92, flag: '', name: 'EUR (€)' },
 };
 
 /**

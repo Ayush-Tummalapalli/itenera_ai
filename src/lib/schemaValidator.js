@@ -53,6 +53,13 @@ export function validateAndCleanItinerary(data) {
           electronics: ['Universal travel adapter', 'Power bank (10,000mAh+)', 'Phone charger & cables'],
           essentials: ['High SPF Sunscreen', 'Personal medication & first aid', 'Refillable water bottle']
         },
+    preferences: typeof data.preferences === 'object' && data.preferences !== null
+      ? {
+          pace: typeof data.preferences.pace === 'string' ? data.preferences.pace : 'Balanced',
+          dietary: typeof data.preferences.dietary === 'string' ? data.preferences.dietary : 'None',
+          interests: Array.isArray(data.preferences.interests) ? data.preferences.interests : []
+        }
+      : { pace: 'Balanced', dietary: 'None', interests: [] },
     isBudgetTooLow: Boolean(data.isBudgetTooLow),
     budgetWarning: typeof data.budgetWarning === 'string' ? data.budgetWarning : null,
     days: []

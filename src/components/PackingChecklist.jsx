@@ -50,7 +50,7 @@ export default function PackingChecklist({ packingChecklist, destination }) {
   };
 
   return (
-    <div className="rounded-lg border border-[#E8E1D5] bg-white p-5 sm:p-6 space-y-5 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+    <div className="rounded-lg border border-[#E8E1D5] bg-[#FDFBF7] p-5 sm:p-6 space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-2 border-b border-[#E8E1D5] pb-4">
         <div className="flex items-center gap-2 font-semibold text-sm text-[#162842]">
           <Briefcase className="w-4 h-4 text-[#E05A3A]" />
@@ -164,7 +164,7 @@ export default function PackingChecklist({ packingChecklist, destination }) {
         <button
           type="submit"
           disabled={!newItemText.trim()}
-          className="px-4 py-2 bg-[#E05A3A] hover:bg-[#C94A2D] text-white text-xs font-semibold rounded-md flex items-center gap-1 transition-colors disabled:opacity-40 shadow-xs"
+          className="px-4 py-2 bg-[#E05A3A] hover:bg-[#C94A2D] text-white text-xs font-semibold rounded-md flex items-center gap-1 transition-colors disabled:opacity-40"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add</span>

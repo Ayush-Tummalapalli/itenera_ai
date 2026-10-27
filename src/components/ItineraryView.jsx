@@ -5,17 +5,42 @@ import DayCard from './DayCard';
 import RefinementBar from './RefinementBar';
 import PackingChecklist from './PackingChecklist';
 import BudgetChart from './BudgetChart';
+import RouteMap from './RouteMap';
+import ExpenseTracker from './ExpenseTracker';
+import CalendarExportModal from './CalendarExportModal';
 import { CURRENCIES, convertCurrencyString } from '@/lib/currencyConverter';
 import { saveTrip } from '@/lib/tripStorage';
-import { MapPin, Calendar, RefreshCw, AlertCircle, DollarSign, AlertTriangle, SunMedium, Briefcase, Users, Printer, Share2, Check, Globe, BookmarkPlus, BookmarkCheck } from 'lucide-react';
+import { 
+  MapPin, 
+  Calendar, 
+  RefreshCw, 
+  AlertCircle, 
+  DollarSign, 
+  AlertTriangle, 
+  SunMedium, 
+  Briefcase, 
+  Users, 
+  Printer, 
+  Share2, 
+  Check, 
+  Globe, 
+  BookmarkPlus, 
+  BookmarkCheck,
+  Compass,
+  Receipt,
+  CalendarPlus,
+  SlidersHorizontal,
+  Sparkles
+} from 'lucide-react';
 
 export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, onTripSaved }) {
   const [isRefining, setIsRefining] = useState(false);
   const [refineNotice, setRefineNotice] = useState(null);
   const [copiedShare, setCopiedShare] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [currency, setCurrency] = useState('USD');
-  const [activeTab, setActiveTab] = useState('itinerary'); // 'itinerary' | 'packing'
+  const [activeTab, setActiveTab] = useState('itinerary'); // 'itinerary' | 'map' | 'expenses' | 'packing'
 
   if (!itinerary) return null;
 
@@ -47,12 +72,17 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
     setRefineNotice(null);
 
     try {
+      const savedKey = typeof window !== 'undefined' ? (localStorage.getItem('itinera_gemini_key') || '') : '';
       const response = await fetch('/api/refine', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(savedKey ? { 'x-gemini-key': savedKey } : {})
+        },
         body: JSON.stringify({
           currentItinerary: itinerary,
-          instruction: instruction
+          instruction: instruction,
+          apiKey: savedKey
         }),
       });
 
@@ -83,22 +113,25 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
       ? convertCurrencyString(itinerary.estimatedBudgetPerPax, currency) 
       : 'N/A';
 
-    let text = `✈️ *${itinerary.tripTitle}*\n`;
-    text += `📍 *Destination*: ${itinerary.destination}\n`;
-    text += `📅 *Duration*: ${itinerary.duration} (${itinerary.companionType || 'Solo Traveler'})\n`;
-    text += `💰 *Est. Budget*: ${formattedBudget}\n\n`;
-    text += `📝 *Summary*: ${itinerary.summary}\n\n`;
+    let text = `[ITINERA] ${itinerary.tripTitle}\n`;
+    text += `Destination: ${itinerary.destination}\n`;
+    text += `Duration: ${itinerary.duration} (${itinerary.companionType || 'Solo Traveler'})\n`;
+    if (itinerary.preferences?.pace) {
+      text += `Pace: ${itinerary.preferences.pace} | Dietary: ${itinerary.preferences.dietary || 'None'}\n`;
+    }
+    text += `Est. Budget: ${formattedBudget}\n\n`;
+    text += `Summary: ${itinerary.summary}\n\n`;
 
     itinerary.days.forEach((day) => {
-      text += `🗓️ *DAY ${day.dayNumber}: ${day.title.toUpperCase()}*\n`;
+      text += `DAY ${day.dayNumber}: ${day.title.toUpperCase()}\n`;
       day.stops.forEach((stop) => {
         const costStr = stop.estimatedCost ? ` [${convertCurrencyString(stop.estimatedCost, currency)}]` : '';
-        text += `• *${stop.time}* - ${stop.title}${costStr}\n  ${stop.description}\n`;
+        text += `- ${stop.time} | ${stop.title}${costStr}\n  ${stop.description}\n`;
       });
       text += `\n`;
     });
 
-    text += `🚀 *Planned with Itinera AI*`;
+    text += `Curated via Itinera Field Planner`;
 
     navigator.clipboard.writeText(text);
     setCopiedShare(true);
@@ -108,6 +141,8 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
   const formattedTotalBudget = itinerary.estimatedBudgetPerPax 
     ? convertCurrencyString(itinerary.estimatedBudgetPerPax, currency) 
     : '$350 / person';
+
+  const preferences = itinerary.preferences || {};
 
   return (
     <div className="space-y-6 animate-fadeIn">
@@ -129,14 +164,14 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
       )}
 
       {/* Main Header Field Dossier Banner in Deep Editorial Blue */}
-      <div className="rounded-lg p-6 sm:p-8 space-y-5 border border-[#162842] bg-[#162842] text-[#FAF7F0] shadow-sm">
+      <div className="rounded-lg p-6 sm:p-8 space-y-5 border border-[#162842] bg-[#162842] text-[#FAF7F0]">
         <div className="space-y-4">
           <div className="flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               {itinerary.isMock ? (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 border border-amber-400/30 text-amber-200 rounded-md text-xs font-medium">
                   <AlertCircle className="w-3.5 h-3.5" />
-                  <span>Curated Sample Archive</span>
+                  <span>Curated Archive Dossier</span>
                 </div>
               ) : (
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#E05A3A]/20 border border-[#E05A3A]/40 text-[#F3785B] rounded-md text-xs font-semibold">
@@ -151,6 +186,27 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
                   <span>{itinerary.companionType}</span>
                 </div>
               )}
+
+              {/* Pace Badge */}
+              {preferences.pace && preferences.pace !== 'Balanced' && (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/10 border border-white/20 text-[#FAF7F0] rounded-md text-xs font-medium">
+                  <span>{preferences.pace === 'Relaxed' ? '🌿 Relaxed' : '⚡ Fast-Paced'}</span>
+                </div>
+              )}
+
+              {/* Dietary Badge */}
+              {preferences.dietary && preferences.dietary !== 'None' && (
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/20 border border-emerald-400/30 text-emerald-200 rounded-md text-xs font-medium">
+                  <span>🥗 {preferences.dietary}</span>
+                </div>
+              )}
+
+              {/* Interests Tags */}
+              {preferences.interests && preferences.interests.slice(0, 2).map((tag, idx) => (
+                <div key={idx} className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 bg-white/5 border border-white/15 text-[#C4D5E8] rounded-md text-[11px] font-medium">
+                  <span>{tag}</span>
+                </div>
+              ))}
             </div>
 
             {/* Currency Selector & Per-Pax Budget Badge */}
@@ -163,15 +219,15 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
                   className="bg-transparent text-white text-xs font-medium outline-none cursor-pointer"
                 >
                   {Object.values(CURRENCIES).map((curr) => (
-                    <option key={curr.code} value={curr.code} className="text-[#162842] font-semibold bg-white">
-                      {curr.flag} {curr.name}
+                    <option key={curr.code} value={curr.code} className="text-[#162842] font-semibold bg-[#FDFBF7]">
+                      {curr.name}
                     </option>
                   ))}
                 </select>
               </div>
 
               {itinerary.estimatedBudgetPerPax && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#E05A3A] text-white rounded-md text-xs font-semibold shadow-xs">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#E05A3A] text-white rounded-md text-xs font-semibold">
                   <DollarSign className="w-3.5 h-3.5 shrink-0" />
                   <span>Est. Budget: {formattedTotalBudget}</span>
                 </div>
@@ -193,7 +249,7 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
           )}
 
           {isSaved && (
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#E05A3A] text-white rounded-md text-xs font-semibold animate-fadeIn shadow-xs">
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-[#E05A3A] text-white rounded-md text-xs font-semibold animate-fadeIn">
               <BookmarkCheck className="w-3.5 h-3.5" />
               <span>Archived to Saved Itineraries</span>
             </div>
@@ -218,16 +274,27 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
 
             {/* Action Bar */}
             <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto self-start sm:self-center no-print">
-              {/* Save Trip Button strictly in Coral Orange */}
+              {/* Save Trip Button */}
               <button
                 onClick={handleSaveCurrentTrip}
                 title="Save itinerary to browser localStorage"
-                className="px-3.5 py-2 bg-[#E05A3A] hover:bg-[#C94A2D] text-white text-xs font-semibold rounded-md flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+                className="px-3.5 py-2 bg-[#E05A3A] hover:bg-[#C94A2D] text-white text-xs font-semibold rounded-md flex items-center justify-center gap-1.5 transition-colors"
               >
                 {isSaved ? <BookmarkCheck className="w-3.5 h-3.5" /> : <BookmarkPlus className="w-3.5 h-3.5" />}
-                <span>{isSaved ? 'Saved!' : 'Save Itinerary'}</span>
+                <span>{isSaved ? 'Saved!' : 'Save Trip'}</span>
               </button>
 
+              {/* Calendar Export Button */}
+              <button
+                onClick={() => setIsCalendarModalOpen(true)}
+                title="Export trip schedule to Apple Calendar, Google Calendar, or Outlook"
+                className="px-3 py-2 bg-white/10 hover:bg-white/20 text-[#FAF7F0] text-xs font-medium rounded-md border border-white/20 flex items-center justify-center gap-1.5 transition-colors"
+              >
+                <CalendarPlus className="w-3.5 h-3.5 text-[#F3785B]" />
+                <span>Sync Calendar</span>
+              </button>
+
+              {/* Share Button */}
               <button
                 onClick={handleShareTrip}
                 title="Copy trip text summary"
@@ -237,6 +304,7 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
                 <span>{copiedShare ? 'Copied' : 'Share'}</span>
               </button>
 
+              {/* Export PDF Button */}
               <button
                 onClick={handleExportPDF}
                 title="Export or print itinerary to clean PDF"
@@ -246,6 +314,7 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
                 <span>Export PDF</span>
               </button>
 
+              {/* New Plan Reset Button */}
               <button
                 onClick={onReset}
                 title="Start a new travel plan"
@@ -274,21 +343,21 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
             <div className="p-4 bg-white/5 rounded-md border border-white/15 space-y-2 text-xs">
               <div className="flex items-center gap-2 font-semibold text-[#F3785B] text-xs">
                 <SunMedium className="w-4 h-4 text-[#E05A3A] shrink-0" />
-                <span className="uppercase tracking-wider text-[11px]">Seasonal Advisory for {itinerary.destination}</span>
+                <span className="uppercase tracking-wider text-[11px]">Seasonal Advisory: {itinerary.destination}</span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-[#FAF7F0]">
-                <div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1 divide-y sm:divide-y-0 sm:divide-x divide-white/15 text-[#FAF7F0]">
+                <div className="sm:pr-4">
                   <span className="block text-[10px] text-[#8FA5C2] font-semibold uppercase tracking-wider">Optimal Season</span>
                   <span className="font-medium text-white">{itinerary.weatherAdvisor.bestSeason}</span>
                 </div>
 
-                <div>
+                <div className="pt-2 sm:pt-0 sm:px-4">
                   <span className="block text-[10px] text-[#8FA5C2] font-semibold uppercase tracking-wider">Average Temp</span>
                   <span className="font-semibold text-[#F3785B]">{itinerary.weatherAdvisor.averageTemp}</span>
                 </div>
 
-                <div>
+                <div className="pt-2 sm:pt-0 sm:pl-4">
                   <span className="block text-[10px] text-[#8FA5C2] font-semibold uppercase tracking-wider">Packing Guideline</span>
                   <span className="text-white text-xs leading-tight">{itinerary.weatherAdvisor.packingTip}</span>
                 </div>
@@ -298,26 +367,54 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
         </div>
       </div>
 
-      {/* Main Content View Switcher Tabs (Itinerary vs Packing List) */}
-      <div className="flex items-center gap-2 border-b border-[#E8E1D5] pb-3 no-print">
+      {/* Main Content View Switcher Tabs (Schedule, Route Map, Expense Tracker, Packing Manifest) */}
+      <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 border-b border-[#E8E1D5] pb-3 no-print">
+        {/* Tab 1: Day-by-Day Schedule */}
         <button
           onClick={() => setActiveTab('itinerary')}
-          className={`flex-1 sm:flex-initial px-4 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${
+          className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${
             activeTab === 'itinerary'
               ? 'bg-[#162842] text-white border border-[#162842]'
-              : 'bg-white text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
+              : 'bg-[#FDFBF7] text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
           }`}
         >
           <Calendar className="w-3.5 h-3.5" />
-          <span>Day-by-Day Schedule</span>
+          <span>Day Schedule</span>
         </button>
 
+        {/* Tab 2: Interactive Route Map */}
+        <button
+          onClick={() => setActiveTab('map')}
+          className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${
+            activeTab === 'map'
+              ? 'bg-[#162842] text-white border border-[#162842]'
+              : 'bg-[#FDFBF7] text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
+          }`}
+        >
+          <Compass className="w-3.5 h-3.5 text-[#E05A3A]" />
+          <span>Interactive Map</span>
+        </button>
+
+        {/* Tab 3: Budget & Expense Ledger */}
+        <button
+          onClick={() => setActiveTab('expenses')}
+          className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${
+            activeTab === 'expenses'
+              ? 'bg-[#162842] text-white border border-[#162842]'
+              : 'bg-[#FDFBF7] text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
+          }`}
+        >
+          <Receipt className="w-3.5 h-3.5" />
+          <span>Expense Tracker</span>
+        </button>
+
+        {/* Tab 4: Packing Manifest */}
         <button
           onClick={() => setActiveTab('packing')}
-          className={`flex-1 sm:flex-initial px-4 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${
+          className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${
             activeTab === 'packing'
               ? 'bg-[#162842] text-white border border-[#162842]'
-              : 'bg-white text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
+              : 'bg-[#FDFBF7] text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
           }`}
         >
           <Briefcase className="w-3.5 h-3.5" />
@@ -326,7 +423,7 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
       </div>
 
       {/* View Content based on activeTab */}
-      {activeTab === 'itinerary' ? (
+      {activeTab === 'itinerary' && (
         <>
           {/* AI Refinement Bar Component */}
           <div className="no-print">
@@ -346,13 +443,32 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
             ))}
           </div>
         </>
-      ) : (
+      )}
+
+      {activeTab === 'map' && (
+        /* Interactive Route Map Component */
+        <RouteMap itinerary={itinerary} currency={currency} />
+      )}
+
+      {activeTab === 'expenses' && (
+        /* Expense Ledger & Budget Tracker Component */
+        <ExpenseTracker itinerary={itinerary} currency={currency} />
+      )}
+
+      {activeTab === 'packing' && (
         /* Interactive Packing Checklist Component */
         <PackingChecklist
           packingChecklist={itinerary.packingChecklist}
           destination={itinerary.destination}
         />
       )}
+
+      {/* Calendar Export Modal */}
+      <CalendarExportModal
+        isOpen={isCalendarModalOpen}
+        onClose={() => setIsCalendarModalOpen(false)}
+        itinerary={itinerary}
+      />
     </div>
   );
 }

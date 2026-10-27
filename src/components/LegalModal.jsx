@@ -12,11 +12,11 @@ export default function LegalModal({ isOpen, onClose, type }) {
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-[#162842]/40 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-[#162842]/60 transition-opacity"
       />
 
       <div className="min-h-full flex items-center justify-center p-4">
-        <div className="relative w-full max-w-2xl bg-[#FAF7F0] border border-[#E8E1D5] rounded-lg shadow-xl p-6 sm:p-8 space-y-6 text-[#162842]">
+        <div className="relative w-full max-w-2xl bg-[#FAF7F0] border border-[#E8E1D5] rounded-lg p-6 sm:p-8 space-y-6 text-[#162842]">
           
           {/* Header */}
           <div className="flex items-center justify-between border-b border-[#E8E1D5] pb-4">
@@ -30,7 +30,7 @@ export default function LegalModal({ isOpen, onClose, type }) {
             </div>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-md border border-[#E8E1D5] bg-white hover:bg-[#F3EFE6] text-[#162842] transition-colors"
+              className="p-1.5 rounded-md border border-[#E8E1D5] bg-[#FDFBF7] hover:bg-[#F3EFE6] text-[#162842] transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -74,7 +74,7 @@ export default function LegalModal({ isOpen, onClose, type }) {
           <div className="pt-2 border-t border-[#E8E1D5] flex justify-end">
             <button
               onClick={onClose}
-              className="px-4 py-2 bg-[#162842] hover:bg-[#223C5E] text-white text-xs font-semibold rounded-md transition-colors shadow-xs"
+              className="px-4 py-2 bg-[#162842] hover:bg-[#223C5E] text-white text-xs font-semibold rounded-md transition-colors"
             >
               Close
             </button>

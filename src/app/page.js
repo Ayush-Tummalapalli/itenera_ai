@@ -6,6 +6,7 @@ import ItineraryView from '@/components/ItineraryView';
 import ErrorAlert from '@/components/ErrorAlert';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import SavedTripsDrawer from '@/components/SavedTripsDrawer';
+import TravelConciergeChat from '@/components/TravelConciergeChat';
 import Footer from '@/components/Footer';
 import LegalModal from '@/components/LegalModal';
 import { getMockItinerary } from '@/lib/mockItinerary';
@@ -18,12 +19,12 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [lastPrompt, setLastPrompt] = useState('');
   const [lastCompanion, setLastCompanion] = useState('Solo Traveler');
+  const [lastPreferences, setLastPreferences] = useState({ pace: 'Balanced', dietary: 'None', interests: [] });
   const [savedTrips, setSavedTrips] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [legalModalType, setLegalModalType] = useState(null);
 
   useEffect(() => {
-    // Purge any legacy dark mode keys to ensure user gets the clean Warm Ivory experience
     try {
       localStorage.removeItem('itinera_theme');
       localStorage.removeItem('flam_theme');
@@ -47,25 +48,31 @@ export default function Home() {
     setItinerary(savedItinerary);
   };
 
-  const handleInstantDemo = (promptText, companion) => {
+  const handleInstantDemo = (promptText, companion, preferences = {}) => {
     setError(null);
     setLastPrompt(promptText);
     setLastCompanion(companion);
-    const demoData = getMockItinerary(promptText, null, companion);
+    setLastPreferences(preferences);
+    const demoData = getMockItinerary(promptText, null, companion, preferences);
     setItinerary(demoData);
   };
 
-  const generateItinerary = async (prompt, companionType = 'Solo Traveler') => {
+  const generateItinerary = async (prompt, companionType = 'Solo Traveler', preferences = {}) => {
     setIsLoading(true);
     setError(null);
     setLastPrompt(prompt);
     setLastCompanion(companionType);
+    setLastPreferences(preferences);
 
     try {
+      const savedKey = typeof window !== 'undefined' ? (localStorage.getItem('itinera_gemini_key') || '') : '';
       const response = await fetch('/api/generate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, companionType }),
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(savedKey ? { 'x-gemini-key': savedKey } : {})
+        },
+        body: JSON.stringify({ prompt, companionType, preferences, apiKey: savedKey }),
       });
 
       let data;
@@ -92,23 +99,23 @@ export default function Home() {
 
   const handleRetry = () => {
     if (lastPrompt) {
-      generateItinerary(lastPrompt, lastCompanion);
+      generateItinerary(lastPrompt, lastCompanion, lastPreferences);
     }
   };
 
   const handleUseMock = () => {
     setError(null);
-    const mockData = getMockItinerary(lastPrompt || 'Sample Trip', null, lastCompanion);
+    const mockData = getMockItinerary(lastPrompt || 'Sample Trip', null, lastCompanion, lastPreferences);
     setItinerary(mockData);
   };
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-[#FAF7F0] text-[#162842]">
       {/* Editorial Masthead Header */}
-      <header className="border-b sticky top-0 z-40 bg-[#FAF7F0]/95 backdrop-blur-xs border-[#E8E1D5]">
+      <header className="border-b sticky top-0 z-40 bg-[#FAF7F0] border-[#E8E1D5]">
         <div className="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-md bg-[#162842] flex items-center justify-center text-[#FAF7F0] font-serif font-bold text-sm shadow-xs">
+            <div className="w-8 h-8 rounded-md bg-[#162842] flex items-center justify-center text-[#FAF7F0] font-serif font-bold text-sm">
               I
             </div>
             <div>
@@ -125,7 +132,7 @@ export default function Home() {
             {/* Saved Itineraries Drawer Trigger in Coral Orange */}
             <button
               onClick={() => setIsDrawerOpen(true)}
-              className="px-3.5 py-1.5 rounded-md border border-[#E05A3A]/40 bg-white text-[#E05A3A] hover:bg-[#FAECE8] text-xs font-semibold flex items-center gap-2 transition-colors shadow-xs"
+              className="px-3.5 py-1.5 rounded-md border border-[#E05A3A]/40 bg-[#FDFBF7] text-[#E05A3A] hover:bg-[#FAECE8] text-xs font-semibold flex items-center gap-2 transition-colors"
             >
               <Bookmark className="w-3.5 h-3.5 text-[#E05A3A]" />
               <span className="hidden sm:inline">Saved Itineraries</span>
@@ -158,12 +165,12 @@ export default function Home() {
               Plan your journey with intentional clarity.
             </h2>
             <p className="text-sm leading-relaxed text-[#526685] max-w-xl">
-              Specify your destination, pace, and travel party. Itinera formats an authentic day-by-day field guide tailored to your budget and interests.
+              Specify your destination, pace, dietary preferences, and travel party. Itinera formats an authentic day-by-day field guide tailored to your budget and interests.
             </p>
           </div>
         )}
 
-        {/* Input Form */}
+        {/* Input Form with Advanced Preferences */}
         <TripInputForm
           onSubmit={generateItinerary}
           onInstantDemo={handleInstantDemo}
@@ -193,6 +200,9 @@ export default function Home() {
         )}
       </main>
 
+      {/* 24/7 AI Travel Concierge Assistant */}
+      <TravelConciergeChat itinerary={itinerary} />
+
       {/* Structured Legal & Editorial Footer */}
       <Footer onOpenLegal={(type) => setLegalModalType(type)} />
 
@@ -205,4 +215,3 @@ export default function Home() {
     </div>
   );
 }
-
