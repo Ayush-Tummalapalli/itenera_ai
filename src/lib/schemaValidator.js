@@ -8,27 +8,35 @@ export function validateAndCleanItinerary(data) {
     throw new Error('Invalid AI response: Expected a JSON object.');
   }
 
+  const fallbackDays = Array.isArray(data.days) && data.days.length > 0 ? data.days.length : 3;
+  const isSouthAsia = typeof data.destination === 'string' && /india|goa|kerala|nepal|sri lanka|bali|thailand/i.test(data.destination);
+  const fallbackDaily = isSouthAsia ? 70 : 160;
+  const computedFallbackTotal = fallbackDays * fallbackDaily;
+  const computedStay = Math.round(computedFallbackTotal * 0.45);
+  const computedFood = Math.round(computedFallbackTotal * 0.35);
+  const computedAct = Math.max(0, computedFallbackTotal - computedStay - computedFood);
+
   // Ensure top-level fields exist with sensible fallbacks
   const cleanData = {
     tripTitle: typeof data.tripTitle === 'string' && data.tripTitle.trim() !== '' 
       ? data.tripTitle 
       : 'Custom Travel Itinerary',
     destination: typeof data.destination === 'string' ? data.destination : 'Destination',
-    duration: typeof data.duration === 'string' ? data.duration : 'Multi-day Trip',
+    duration: typeof data.duration === 'string' ? data.duration : `${fallbackDays} Days`,
     summary: typeof data.summary === 'string' ? data.summary : 'An itinerary tailored to your preferences.',
     companionType: typeof data.companionType === 'string' && data.companionType.trim() !== ''
       ? data.companionType
       : 'General',
     estimatedBudgetPerPax: typeof data.estimatedBudgetPerPax === 'string' && data.estimatedBudgetPerPax.trim() !== ''
       ? data.estimatedBudgetPerPax
-      : '$350 / person',
+      : `$${computedFallbackTotal} / person`,
     budgetBreakdown: typeof data.budgetBreakdown === 'object' && data.budgetBreakdown !== null
       ? {
-          stay: data.budgetBreakdown.stay || '$150',
-          food: data.budgetBreakdown.food || '$120',
-          activities: data.budgetBreakdown.activities || '$80'
+          stay: data.budgetBreakdown.stay || `$${computedStay}`,
+          food: data.budgetBreakdown.food || `$${computedFood}`,
+          activities: data.budgetBreakdown.activities || `$${computedAct}`
         }
-      : { stay: '$150', food: '$120', activities: '$80' },
+      : { stay: `$${computedStay}`, food: `$${computedFood}`, activities: `$${computedAct}` },
     weatherAdvisor: typeof data.weatherAdvisor === 'object' && data.weatherAdvisor !== null
       ? {
           bestSeason: data.weatherAdvisor.bestSeason || 'Spring & Autumn',
@@ -62,7 +70,53 @@ export function validateAndCleanItinerary(data) {
       : { pace: 'Balanced', dietary: 'None', interests: [] },
     isBudgetTooLow: Boolean(data.isBudgetTooLow),
     budgetWarning: typeof data.budgetWarning === 'string' ? data.budgetWarning : null,
+    accommodations: [],
+    curatedDining: [],
+    agentNotes: null,
     days: []
+  };
+
+  // Validate Curated Accommodations (Hotels, Resorts, Boutiques)
+  const rawAccommodations = Array.isArray(data.accommodations) ? data.accommodations : [];
+  cleanData.accommodations = rawAccommodations.map((acc, aIdx) => ({
+    id: acc.id || `acc-${aIdx + 1}`,
+    name: typeof acc.name === 'string' && acc.name.trim() !== '' ? acc.name : `Hotel ${aIdx + 1}`,
+    type: typeof acc.type === 'string' ? acc.type : 'Boutique Hotel',
+    area: typeof acc.area === 'string' ? acc.area : (cleanData.destination || 'Central Area'),
+    priceRange: typeof acc.priceRange === 'string' ? acc.priceRange : '$120 - $180 / night',
+    rating: typeof acc.rating === 'string' || typeof acc.rating === 'number' ? String(acc.rating) : '4.7',
+    description: typeof acc.description === 'string' ? acc.description : 'Curated stay recommended for comfort, character, and prime location.',
+    bestFor: typeof acc.bestFor === 'string' ? acc.bestFor : 'Couples & independent travelers',
+    amenities: Array.isArray(acc.amenities) && acc.amenities.length > 0 ? acc.amenities : ['Free Wi-Fi', 'Breakfast', 'Air Conditioning'],
+    bookingTip: typeof acc.bookingTip === 'string' ? acc.bookingTip : 'Reserve at least 2-3 weeks in advance for best rates.'
+  }));
+
+  // Validate Curated Dining & Restaurants
+  const rawDining = Array.isArray(data.curatedDining) ? data.curatedDining : [];
+  cleanData.curatedDining = rawDining.map((rest, rIdx) => ({
+    id: rest.id || `rest-${rIdx + 1}`,
+    name: typeof rest.name === 'string' && rest.name.trim() !== '' ? rest.name : `Restaurant ${rIdx + 1}`,
+    cuisine: typeof rest.cuisine === 'string' ? rest.cuisine : 'Local Cuisine',
+    area: typeof rest.area === 'string' ? rest.area : (cleanData.destination || 'Downtown'),
+    mealType: typeof rest.mealType === 'string' ? rest.mealType : 'Lunch & Dinner',
+    priceRange: typeof rest.priceRange === 'string' ? rest.priceRange : '$15 - $30 / person',
+    rating: typeof rest.rating === 'string' || typeof rest.rating === 'number' ? String(rest.rating) : '4.8',
+    signatureDishes: Array.isArray(rest.signatureDishes) && rest.signatureDishes.length > 0 ? rest.signatureDishes : ['Regional Specialty', 'Chef Selection'],
+    ambiance: typeof rest.ambiance === 'string' ? rest.ambiance : 'Warm and authentic local ambiance',
+    reservationTip: typeof rest.reservationTip === 'string' ? rest.reservationTip : 'Walk-ins welcome or call ahead during peak dinner hours.'
+  }));
+
+  // Validate AI Agent Notes
+  cleanData.agentNotes = typeof data.agentNotes === 'object' && data.agentNotes !== null ? {
+    rationale: typeof data.agentNotes.rationale === 'string' ? data.agentNotes.rationale : `Strategically sequenced to optimize travel times and capture the best of ${cleanData.destination}.`,
+    transitAdvice: typeof data.agentNotes.transitAdvice === 'string' ? data.agentNotes.transitAdvice : 'Local taxis, rideshare apps, and regional transit cards are recommended.',
+    safetyAndScams: typeof data.agentNotes.safetyAndScams === 'string' ? data.agentNotes.safetyAndScams : 'Keep valuables secure and verify ticket prices at official vendor booths.',
+    reservationAlerts: typeof data.agentNotes.reservationAlerts === 'string' ? data.agentNotes.reservationAlerts : 'Popular landmark entry slots and fine dining reservations fill quickly.'
+  } : {
+    rationale: `Strategically sequenced to optimize travel times and capture the best of ${cleanData.destination}.`,
+    transitAdvice: 'Local taxis, rideshare apps, and regional transit cards are recommended.',
+    safetyAndScams: 'Keep valuables secure and verify ticket prices at official vendor booths.',
+    reservationAlerts: 'Popular landmark entry slots and fine dining reservations fill quickly.'
   };
 
   // Validate days array

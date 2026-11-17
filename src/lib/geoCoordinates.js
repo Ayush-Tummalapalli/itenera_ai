@@ -88,8 +88,17 @@ export const CITY_COORDINATES = {
       'sinquerim': [15.4988, 73.7686],
       'old goa': [15.5029, 73.9118],
       'bom jesus': [15.5009, 73.9116],
+      'se cathedral': [15.5036, 73.9126],
       'anjuna': [15.5800, 73.7420],
-      'mandovi': [15.4980, 73.8320]
+      'mandovi': [15.4980, 73.8320],
+      'dudhsagar': [15.3144, 74.3144],
+      'fontainhas': [15.4989, 73.8315],
+      'chapora': [15.6056, 73.7383],
+      'vagator': [15.5983, 73.7378],
+      'palolem': [15.0100, 74.0232],
+      'arambol': [15.6869, 73.7042],
+      'ponda': [15.4026, 74.0153],
+      'spice farm': [15.4100, 74.0200]
     }
   },
   barcelona: {

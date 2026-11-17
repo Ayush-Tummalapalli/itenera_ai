@@ -101,8 +101,13 @@ export async function POST(req) {
       : '';
 
     const systemInstructions = `
-You are an expert travel planner assistant.
-Generate a realistic, day-by-day travel itinerary based on the user request in JSON format.
+You are an elite Autonomous AI Travel Agent.
+You do not just provide a basic schedule; you autonomously formulate an end-to-end master travel dossier based on the user's destination, companion party, pace, and interests.
+Your plan MUST include:
+1. Hand-picked accommodations (Luxury, Boutique, Value) suited to the traveler's party.
+2. Iconic curated dining & food scene (breakfast spots, legendary local lunches, must-visit dinner reservations, signature dishes).
+3. Strategic AI Agent intelligence (route rationale, transit hacks, reservation warnings).
+4. Realistic day-by-day activity blueprint with morning, afternoon, and evening flows.
 
 USER TRAVEL CUSTOMIZATIONS:
 - Companion Type: "${companionType}"
@@ -113,14 +118,25 @@ USER TRAVEL CUSTOMIZATIONS:
 REQUIRED SCHEMAS & FEATURES:
 1. Include "companionType": "${companionType}".
 2. Include "preferences": ${JSON.stringify(preferences)}.
-3. Estimate total budget per person in USD (estimatedBudgetPerPax, budgetBreakdown: stay, food, activities).
-4. If user requests an unrealistically low budget (under $30/day), set isBudgetTooLow: true and budgetWarning string.
-5. Provide a "weatherAdvisor" object (bestSeason, averageTemp, packingTip).
-6. Provide a destination & weather tailored "packingChecklist" object:
-   - "documents": Array of strings (e.g., ["Passport & Visas", "Travel Insurance Policy"])
-   - "clothing": Array of strings (e.g., ["Linen shirts", "Walking sneakers", "Swimwear"])
-   - "electronics": Array of strings (e.g., ["Universal Adapter", "Power Bank", "Camera Charger"])
-   - "essentials": Array of strings (e.g., ["High SPF Sunscreen", "Bug Spray", "Refillable Bottle"])
+3. Estimate total budget per person in USD (estimatedBudgetPerPax, budgetBreakdown: stay, food, activities):
+   - CRITICAL BUDGET CALCULATION: Accurately calculate the budget by multiplying the exact duration in days by realistic destination daily rates:
+     * High-cost western / east-asian capitals (Tokyo, Paris, New York, London, Zurich): $180 - $260 / person / day.
+     * Mid-tier European / developed cities (Rome, Barcelona, Berlin, Madrid): $140 - $190 / person / day.
+     * Emerging / tropical / South Asian destinations (Goa, Kerala, Bali, Thailand, Vietnam): $55 - $90 / person / day.
+   - Adjust for companion party: Solo (+15% single supplement), Couple (+5% romantic dining), Family with Kids (-10% family rate), Group of Friends (-15% shared rooms/villas).
+   - Divide total into breakdown: stay (~45%), food (~35%), activities (~20%).
+4. Provide "accommodations": Array of 3 distinct hotel/stay options (Luxury, Boutique, Value):
+   - Each with: name, type, area, priceRange, rating (e.g. "4.8"), description, bestFor, amenities (array of 3-4 strings), bookingTip.
+5. Provide "curatedDining": Array of 4-5 hand-selected restaurants and culinary gems:
+   - Each with: name, cuisine, area, mealType, priceRange (per person), rating, signatureDishes (array of 2-3 specific local dishes), ambiance, reservationTip.
+6. Provide "agentNotes": Object containing:
+   - "rationale": Why this route and sequence was chosen.
+   - "transitAdvice": Local transportation protocol (metro cards, scooters, ride apps, walking tips).
+   - "safetyAndScams": Practical local safety and common tourist trap warnings.
+   - "reservationAlerts": Specific tickets or dinner reservations requiring advance booking.
+7. If user requests an unrealistically low budget (under $30/day in Asia or under $65/day in Europe/US), set isBudgetTooLow: true and budgetWarning string.
+8. Provide a "weatherAdvisor" object (bestSeason, averageTemp, packingTip).
+9. Provide a destination & weather tailored "packingChecklist" object (documents, clothing, electronics, essentials).
 
 Required JSON Schema:
 {
@@ -139,6 +155,40 @@ Required JSON Schema:
     "stay": "$XXX",
     "food": "$XXX",
     "activities": "$XXX"
+  },
+  "accommodations": [
+    {
+      "id": "acc-1",
+      "name": "Hotel / Resort Name",
+      "type": "Luxury Resort | Boutique Hotel | Smart Value Stay",
+      "area": "Neighborhood / District",
+      "priceRange": "$XXX - $XXX / night",
+      "rating": "4.8",
+      "description": "Why the agent picked this stay",
+      "bestFor": "Target audience",
+      "amenities": ["Amenity 1", "Amenity 2", "Amenity 3"],
+      "bookingTip": "Specific insider booking advice"
+    }
+  ],
+  "curatedDining": [
+    {
+      "id": "rest-1",
+      "name": "Restaurant / Café Name",
+      "cuisine": "Cuisine style",
+      "area": "Neighborhood",
+      "mealType": "Lunch & Dinner | Breakfast & Brunch | Evening Dining",
+      "priceRange": "$XX - $XX / person",
+      "rating": "4.8",
+      "signatureDishes": ["Dish 1", "Dish 2", "Dish 3"],
+      "ambiance": "Atmosphere description",
+      "reservationTip": "Reservation guideline"
+    }
+  ],
+  "agentNotes": {
+    "rationale": "Strategic explanation of itinerary flow",
+    "transitAdvice": "Best way to commute locally",
+    "safetyAndScams": "Scam or safety watchouts",
+    "reservationAlerts": "Tickets/slots to book in advance"
   },
   "weatherAdvisor": {
     "bestSeason": "Best season",
