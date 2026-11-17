@@ -97,8 +97,9 @@ USER REFINEMENT INSTRUCTION:
 
 CRITICAL INSTRUCTIONS:
 1. Update the itinerary based on the refinement instruction.
-2. Preserve or update "packingChecklist" (documents, clothing, essentials).
-3. Preserve or update "weatherAdvisor", "estimatedBudgetPerPax", and "budgetBreakdown".
+2. Preserve or update "accommodations" (hotels/resorts) and "curatedDining" (restaurants/dishes).
+3. Preserve or update "agentNotes", "weatherAdvisor", "estimatedBudgetPerPax", and "budgetBreakdown".
+4. Preserve or update "packingChecklist" (documents, clothing, essentials).
 
 Schema MUST match:
 {
@@ -112,6 +113,40 @@ Schema MUST match:
     "stay": "$XXX",
     "food": "$XXX",
     "activities": "$XXX"
+  },
+  "accommodations": [
+    {
+      "id": "acc-1",
+      "name": "Hotel / Resort Name",
+      "type": "Luxury Resort | Boutique Hotel | Smart Value Stay",
+      "area": "Neighborhood / District",
+      "priceRange": "$XXX - $XXX / night",
+      "rating": "4.8",
+      "description": "Why recommended",
+      "bestFor": "Target audience",
+      "amenities": ["Amenity 1", "Amenity 2", "Amenity 3"],
+      "bookingTip": "Booking advice"
+    }
+  ],
+  "curatedDining": [
+    {
+      "id": "rest-1",
+      "name": "Restaurant Name",
+      "cuisine": "Cuisine style",
+      "area": "Neighborhood",
+      "mealType": "Lunch & Dinner | Breakfast & Brunch",
+      "priceRange": "$XX - $XX / person",
+      "rating": "4.8",
+      "signatureDishes": ["Dish 1", "Dish 2"],
+      "ambiance": "Ambiance",
+      "reservationTip": "Reservation tip"
+    }
+  ],
+  "agentNotes": {
+    "rationale": "Strategic reasoning",
+    "transitAdvice": "Transit advice",
+    "safetyAndScams": "Safety tips",
+    "reservationAlerts": "Reservation alerts"
   },
   "weatherAdvisor": {
     "bestSeason": "Best season",

@@ -106,18 +106,29 @@ export default function TripInputForm({ onSubmit, onInstantDemo, isLoading }) {
         </div>
 
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 pt-1">
-          {CURATED_INSPIRATIONS.map((demo, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => onInstantDemo(demo.prompt, demo.companion, getPreferencesObject())}
-              disabled={isLoading}
-              className="px-3 py-1.5 rounded-md text-xs font-medium border border-[#E8E1D5] bg-[#FDFBF7] text-[#162842] hover:border-[#E05A3A] hover:text-[#E05A3A] flex items-center justify-between sm:justify-center gap-2 transition-colors disabled:opacity-50"
-            >
-              <span>{demo.label}</span>
-              <span className="text-[10px] text-[#526685] font-normal">({demo.sub})</span>
-            </button>
-          ))}
+          {CURATED_INSPIRATIONS.map((demo, idx) => {
+            const isSelected = prompt === demo.prompt && companionType === demo.companion;
+            return (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => {
+                  setPrompt(demo.prompt);
+                  setCompanionType(demo.companion);
+                  onInstantDemo(demo.prompt, demo.companion, getPreferencesObject());
+                }}
+                disabled={isLoading}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium border flex items-center justify-between sm:justify-center gap-2 transition-colors disabled:opacity-50 ${
+                  isSelected
+                    ? 'border-[#E05A3A] bg-[#E05A3A]/10 text-[#E05A3A] font-semibold ring-1 ring-[#E05A3A]/30'
+                    : 'border-[#E8E1D5] bg-[#FDFBF7] text-[#162842] hover:border-[#E05A3A] hover:text-[#E05A3A]'
+                }`}
+              >
+                <span>{demo.label}</span>
+                <span className={`text-[10px] ${isSelected ? 'text-[#E05A3A]' : 'text-[#526685]'} font-normal`}>({demo.sub})</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -263,9 +274,15 @@ export default function TripInputForm({ onSubmit, onInstantDemo, isLoading }) {
       {/* Travel Query Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
-          <label className="block text-[11px] uppercase tracking-wider font-semibold text-[#526685]">
-            Journey Details &amp; Destination
-          </label>
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <label className="block text-[11px] uppercase tracking-wider font-semibold text-[#526685]">
+              Journey Details &amp; Destination
+            </label>
+            <span className="text-[10px] text-[#E05A3A] font-semibold flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              <span>Autonomous Agent Formulates Hotels, Dining &amp; Routes</span>
+            </span>
+          </div>
           <textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
@@ -275,7 +292,7 @@ export default function TripInputForm({ onSubmit, onInstantDemo, isLoading }) {
                 handleSubmit(e);
               }
             }}
-            placeholder={`Where do you wish to journey as a ${companionType}? (e.g. '4 days in Kerala backwaters' or 'Tokyo street food')`}
+            placeholder={`Where do you wish to journey as a ${companionType}? (e.g. '5 days in Goa beaches & seafood' or 'Tokyo street food & culture')`}
             rows={3}
             disabled={isLoading}
             className="w-full px-3.5 py-3 border border-[#E8E1D5] bg-[#FDFBF7] text-[#162842] placeholder:text-[#8899B0] rounded-md outline-none resize-none text-sm transition-colors focus:border-[#E05A3A] disabled:opacity-50"
@@ -304,16 +321,17 @@ export default function TripInputForm({ onSubmit, onInstantDemo, isLoading }) {
           <button
             type="submit"
             disabled={!prompt.trim() || isLoading}
-            className="w-full sm:w-auto px-6 py-2.5 bg-[#E05A3A] hover:bg-[#C94A2D] text-white font-semibold text-xs sm:text-sm rounded-md flex items-center justify-center gap-2 transition-colors disabled:opacity-40"
+            className="w-full sm:w-auto px-6 py-2.5 bg-[#E05A3A] hover:bg-[#C94A2D] text-white font-semibold text-xs sm:text-sm rounded-md flex items-center justify-center gap-2 transition-colors disabled:opacity-40 shadow-xs"
           >
             {isLoading ? (
               <>
                 <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Formulating Dossier...</span>
+                <span>Agent Formulating Master Plan...</span>
               </>
             ) : (
               <>
-                <span>Curate Itinerary</span>
+                <Sparkles className="w-4 h-4" />
+                <span>Launch Agent Curation</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}

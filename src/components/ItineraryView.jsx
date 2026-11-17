@@ -8,6 +8,9 @@ import BudgetChart from './BudgetChart';
 import RouteMap from './RouteMap';
 import ExpenseTracker from './ExpenseTracker';
 import CalendarExportModal from './CalendarExportModal';
+import CuratedStays from './CuratedStays';
+import DiningGuide from './DiningGuide';
+import AgentIntelligenceBanner from './AgentIntelligenceBanner';
 import { CURRENCIES, convertCurrencyString } from '@/lib/currencyConverter';
 import { saveTrip } from '@/lib/tripStorage';
 import { 
@@ -30,7 +33,11 @@ import {
   Receipt,
   CalendarPlus,
   SlidersHorizontal,
-  Sparkles
+  Sparkles,
+  Hotel,
+  Utensils,
+  ChefHat,
+  ArrowRight
 } from 'lucide-react';
 
 export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, onTripSaved }) {
@@ -367,12 +374,12 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
         </div>
       </div>
 
-      {/* Main Content View Switcher Tabs (Schedule, Route Map, Expense Tracker, Packing Manifest) */}
-      <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 border-b border-[#E8E1D5] pb-3 no-print">
+      {/* Main Content View Switcher Tabs (Schedule, Stays, Dining, Route Map, Expense Tracker, Packing Manifest) */}
+      <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 border-b border-[#E8E1D5] pb-3 no-print flex-wrap">
         {/* Tab 1: Day-by-Day Schedule */}
         <button
           onClick={() => setActiveTab('itinerary')}
-          className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${
+          className={`px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 ${
             activeTab === 'itinerary'
               ? 'bg-[#162842] text-white border border-[#162842]'
               : 'bg-[#FDFBF7] text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
@@ -382,49 +389,155 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
           <span>Day Schedule</span>
         </button>
 
-        {/* Tab 2: Interactive Route Map */}
+        {/* Tab 2: Curated Stays & Accommodations */}
+        <button
+          onClick={() => setActiveTab('stays')}
+          className={`px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 ${
+            activeTab === 'stays'
+              ? 'bg-[#162842] text-white border border-[#162842]'
+              : 'bg-[#FDFBF7] text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
+          }`}
+        >
+          <Hotel className="w-3.5 h-3.5 text-[#E05A3A]" />
+          <span>Curated Stays</span>
+          {itinerary.accommodations && itinerary.accommodations.length > 0 && (
+            <span className={`text-[10px] px-1.5 py-0.2 rounded font-bold ${activeTab === 'stays' ? 'bg-[#E05A3A] text-white' : 'bg-[#E8E1D5] text-[#162842]'}`}>
+              {itinerary.accommodations.length}
+            </span>
+          )}
+        </button>
+
+        {/* Tab 3: Curated Dining & Food Guide */}
+        <button
+          onClick={() => setActiveTab('dining')}
+          className={`px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 ${
+            activeTab === 'dining'
+              ? 'bg-[#162842] text-white border border-[#162842]'
+              : 'bg-[#FDFBF7] text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
+          }`}
+        >
+          <Utensils className="w-3.5 h-3.5 text-[#E05A3A]" />
+          <span>Dining Guide</span>
+          {itinerary.curatedDining && itinerary.curatedDining.length > 0 && (
+            <span className={`text-[10px] px-1.5 py-0.2 rounded font-bold ${activeTab === 'dining' ? 'bg-[#E05A3A] text-white' : 'bg-[#E8E1D5] text-[#162842]'}`}>
+              {itinerary.curatedDining.length}
+            </span>
+          )}
+        </button>
+
+        {/* Tab 4: Interactive Route Map */}
         <button
           onClick={() => setActiveTab('map')}
-          className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${
+          className={`px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 ${
             activeTab === 'map'
               ? 'bg-[#162842] text-white border border-[#162842]'
               : 'bg-[#FDFBF7] text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
           }`}
         >
           <Compass className="w-3.5 h-3.5 text-[#E05A3A]" />
-          <span>Interactive Map</span>
+          <span>Route Map</span>
         </button>
 
-        {/* Tab 3: Budget & Expense Ledger */}
+        {/* Tab 5: Budget & Expense Ledger */}
         <button
           onClick={() => setActiveTab('expenses')}
-          className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${
+          className={`px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 ${
             activeTab === 'expenses'
               ? 'bg-[#162842] text-white border border-[#162842]'
               : 'bg-[#FDFBF7] text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
           }`}
         >
           <Receipt className="w-3.5 h-3.5" />
-          <span>Expense Tracker</span>
+          <span>Expenses</span>
         </button>
 
-        {/* Tab 4: Packing Manifest */}
+        {/* Tab 6: Packing Manifest */}
         <button
           onClick={() => setActiveTab('packing')}
-          className={`px-4 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-2 ${
+          className={`px-3.5 py-2 rounded-md text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 ${
             activeTab === 'packing'
               ? 'bg-[#162842] text-white border border-[#162842]'
               : 'bg-[#FDFBF7] text-[#526685] border border-[#E8E1D5] hover:text-[#162842]'
           }`}
         >
           <Briefcase className="w-3.5 h-3.5" />
-          <span>Packing Manifest</span>
+          <span>Packing</span>
         </button>
       </div>
 
       {/* View Content based on activeTab */}
       {activeTab === 'itinerary' && (
-        <>
+        <div className="space-y-6">
+          {/* AI Travel Agent Strategic Blueprint Banner */}
+          {itinerary.agentNotes && (
+            <AgentIntelligenceBanner
+              agentNotes={itinerary.agentNotes}
+              destination={itinerary.destination}
+              duration={itinerary.duration}
+            />
+          )}
+
+          {/* Quick-Jump Dossier Previews for Hotels and Dining */}
+          {(itinerary.accommodations?.length > 0 || itinerary.curatedDining?.length > 0) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {itinerary.accommodations?.length > 0 && (
+                <div 
+                  onClick={() => setActiveTab('stays')}
+                  className="p-4 rounded-lg border border-[#E8E1D5] bg-[#FDFBF7] hover:border-[#162842] transition-all cursor-pointer group shadow-2xs"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-[#162842]">
+                      <Hotel className="w-4 h-4 text-[#E05A3A]" />
+                      <span>🏨 Recommended Stays</span>
+                    </div>
+                    <span className="text-[11px] text-[#E05A3A] font-semibold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                      View all {itinerary.accommodations.length} stays <ArrowRight className="w-3 h-3" />
+                    </span>
+                  </div>
+                  <div className="mt-2.5 pt-2.5 border-t border-[#E8E1D5]">
+                    <div className="font-serif text-sm font-semibold text-[#162842] group-hover:text-[#E05A3A] transition-colors">
+                      {itinerary.accommodations[0].name}
+                    </div>
+                    <div className="text-[11px] text-[#526685] mt-0.5 flex items-center justify-between">
+                      <span>{itinerary.accommodations[0].area}</span>
+                      <span className="font-bold text-[#162842]">
+                        {convertCurrencyString(itinerary.accommodations[0].priceRange, currency)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {itinerary.curatedDining?.length > 0 && (
+                <div 
+                  onClick={() => setActiveTab('dining')}
+                  className="p-4 rounded-lg border border-[#E8E1D5] bg-[#FDFBF7] hover:border-[#162842] transition-all cursor-pointer group shadow-2xs"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-[#162842]">
+                      <Utensils className="w-4 h-4 text-[#E05A3A]" />
+                      <span>🍽️ Curated Food Scene</span>
+                    </div>
+                    <span className="text-[11px] text-[#E05A3A] font-semibold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                      View all {itinerary.curatedDining.length} picks <ArrowRight className="w-3 h-3" />
+                    </span>
+                  </div>
+                  <div className="mt-2.5 pt-2.5 border-t border-[#E8E1D5]">
+                    <div className="font-serif text-sm font-semibold text-[#162842] group-hover:text-[#E05A3A] transition-colors">
+                      {itinerary.curatedDining[0].name}
+                    </div>
+                    <div className="text-[11px] text-[#526685] mt-0.5 flex items-center justify-between">
+                      <span>{itinerary.curatedDining[0].cuisine}</span>
+                      <span className="font-bold text-[#162842]">
+                        {convertCurrencyString(itinerary.curatedDining[0].priceRange, currency)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* AI Refinement Bar Component */}
           <div className="no-print">
             <RefinementBar onRefine={handleRefine} isRefining={isRefining} />
@@ -442,7 +555,25 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
               />
             ))}
           </div>
-        </>
+        </div>
+      )}
+
+      {/* Curated Accommodations View */}
+      {activeTab === 'stays' && (
+        <CuratedStays
+          accommodations={itinerary.accommodations}
+          destination={itinerary.destination}
+          currency={currency}
+        />
+      )}
+
+      {/* Curated Dining & Food View */}
+      {activeTab === 'dining' && (
+        <DiningGuide
+          curatedDining={itinerary.curatedDining}
+          destination={itinerary.destination}
+          currency={currency}
+        />
       )}
 
       {activeTab === 'map' && (
