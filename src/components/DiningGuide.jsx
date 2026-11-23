@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { convertCurrencyString } from '@/lib/currencyConverter';
 import { Utensils, Star, MapPin, ExternalLink, Sparkles, Coffee, Clock, Heart, ChefHat } from 'lucide-react';
 
-export default function DiningGuide({ curatedDining, destination, currency = 'USD' }) {
+export default function DiningGuide({ curatedDining, destination, currency = 'INR' }) {
   const [filterType, setFilterType] = useState('ALL'); // 'ALL' | 'DINNER' | 'LUNCH' | 'BREAKFAST'
 
   if (!curatedDining || curatedDining.length === 0) {

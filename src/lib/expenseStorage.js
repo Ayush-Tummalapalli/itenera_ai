@@ -64,7 +64,7 @@ export function deleteTripExpense(tripKey, expenseId) {
   return updated;
 }
 
-export function exportExpensesCSV(expenses = [], tripTitle = 'Trip Expenses', currency = 'USD') {
+export function exportExpensesCSV(expenses = [], tripTitle = 'Trip Expenses', currency = 'INR') {
   if (typeof window === 'undefined') return;
   
   const headers = ['Date', 'Day', 'Category', 'Description', `Amount (${currency})`, 'Note'];

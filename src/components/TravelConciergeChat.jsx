@@ -40,7 +40,7 @@ export default function TravelConciergeChat({ itinerary }) {
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: `Hello! I am your **Itinera Field Concierge**. Whether you need local etiquette, emergency phrases, dining customs, or transit advice for **${itinerary?.destination || 'your destination'}**, I'm here 24/7. How can I assist your travels today?`,
+      content: `Hello! I am **SUZIE (your travel assistance)**. Whether you need local etiquette, emergency phrases, dining customs, or transit advice for **${itinerary?.destination || 'your destination'}**, I'm here 24/7. How can I assist your travels today?`,
       suggestions: ['How to use transit here?', 'Show my Day 1 stops', 'Tipping etiquette']
     }
   ]);
@@ -73,7 +73,7 @@ export default function TravelConciergeChat({ itinerary }) {
       setMessages([
         {
           role: 'assistant',
-          content: `Hello! I am your **Itinera Field Concierge**. Whether you need local etiquette, emergency phrases, dining customs, or transit advice for **${itinerary.destination}**, I'm here 24/7. How can I assist your travels today?`,
+          content: `Hello! I am **SUZIE (your travel assistance)**. Whether you need local etiquette, emergency phrases, dining customs, or transit advice for **${itinerary.destination}**, I'm here 24/7. How can I assist your travels today?`,
           suggestions: ['How to use transit here?', 'Show my Day 1 stops', 'Tipping etiquette', 'Safety & Emergency']
         }
       ]);
@@ -96,7 +96,7 @@ export default function TravelConciergeChat({ itinerary }) {
     setMessages([
       {
         role: 'assistant',
-        content: `Conversation refreshed. How can I assist with your journey in **${itinerary?.destination || 'your destination'}**?`,
+        content: `Conversation refreshed. I'm SUZIE, your travel assistance. How can I assist with your journey in **${itinerary?.destination || 'your destination'}**?`,
         suggestions: ['How to use transit here?', 'Show my Day 1 stops', 'Dining customs', 'Phrases & Greetings']
       }
     ]);
@@ -226,7 +226,7 @@ export default function TravelConciergeChat({ itinerary }) {
           <button
             onClick={() => setIsOpen(true)}
             className="group relative flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#162842] text-white shadow-xl hover:bg-[#E05A3A] transition-all transform hover:-translate-y-0.5 border border-white/20"
-            title="Ask AI Travel Concierge for local advice"
+            title="Ask SUZIE (your travel assistance) for local advice"
           >
             <div className="relative">
               <Compass className="w-5 h-5 text-[#F3785B] group-hover:text-white transition-colors animate-spin-slow" />
@@ -234,10 +234,10 @@ export default function TravelConciergeChat({ itinerary }) {
             </div>
             <div className="text-left">
               <span className="block text-xs font-bold font-serif leading-tight">
-                Field Concierge
+                SUZIE
               </span>
               <span className="block text-[10px] text-[#A0B3CC] group-hover:text-white/80 leading-none">
-                {isLiveAI ? 'Gemini AI Active' : 'Field Intelligence'}
+                (your travel assistance)
               </span>
             </div>
           </button>
@@ -257,7 +257,7 @@ export default function TravelConciergeChat({ itinerary }) {
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="font-serif text-sm font-bold tracking-wide">
-                    Itinera Concierge
+                    SUZIE (your travel assistance)
                   </h3>
                   <button
                     onClick={() => setShowKeyModal(true)}
@@ -333,7 +333,7 @@ export default function TravelConciergeChat({ itinerary }) {
 
                     {!isUser && (
                       <div className="mt-2.5 pt-2 border-t border-[#E8E1D5] flex items-center justify-between text-[10px] text-[#526685]">
-                        <span className="font-semibold text-[#E05A3A]">Itinera AI</span>
+                        <span className="font-semibold text-[#E05A3A]">SUZIE</span>
                         
                         <div className="flex items-center gap-2.5">
                           {/* Audio Speech Button */}
@@ -412,7 +412,7 @@ export default function TravelConciergeChat({ itinerary }) {
           >
             <input
               type="text"
-              placeholder={`Ask about transport, food, Day 1 stops in ${itinerary?.destination?.split(',')[0] || 'destination'}...`}
+              placeholder={`Ask SUZIE about transport, food, Day 1 stops in ${itinerary?.destination?.split(',')[0] || 'destination'}...`}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={isLoading}

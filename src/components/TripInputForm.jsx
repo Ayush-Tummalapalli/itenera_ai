@@ -326,12 +326,12 @@ export default function TripInputForm({ onSubmit, onInstantDemo, isLoading }) {
             {isLoading ? (
               <>
                 <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Agent Formulating Master Plan...</span>
+                <span>Generating itinerary...</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                <span>Launch Agent Curation</span>
+                <span>Curate My Journey</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}

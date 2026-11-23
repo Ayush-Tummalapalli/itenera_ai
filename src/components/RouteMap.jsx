@@ -5,7 +5,7 @@ import { getStopCoordinates, buildGoogleMapsDirectionsUrl } from '@/lib/geoCoord
 import { convertCurrencyString } from '@/lib/currencyConverter';
 import { MapPin, Navigation, ExternalLink, Calendar, Compass, Layers, Clock, DollarSign } from 'lucide-react';
 
-export default function RouteMap({ itinerary, currency = 'USD' }) {
+export default function RouteMap({ itinerary, currency = 'INR' }) {
   const [selectedDayIndex, setSelectedDayIndex] = useState(0); // 0 = Day 1, or -1 for All Days
   const [selectedStopId, setSelectedStopId] = useState(null);
   const mapContainerRef = useRef(null);

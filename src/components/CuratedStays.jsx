@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { convertCurrencyString } from '@/lib/currencyConverter';
 import { Hotel, Star, MapPin, ExternalLink, Sparkles, Bed, ShieldCheck, Compass, CheckCircle2 } from 'lucide-react';
 
-export default function CuratedStays({ accommodations, destination, currency = 'USD' }) {
+export default function CuratedStays({ accommodations, destination, currency = 'INR' }) {
   const [filterType, setFilterType] = useState('ALL'); // 'ALL' | 'LUXURY' | 'BOUTIQUE' | 'VALUE'
 
   if (!accommodations || accommodations.length === 0) {
