@@ -26,7 +26,7 @@ import {
   Utensils
 } from 'lucide-react';
 
-export default function ExpenseTracker({ itinerary, currency = 'USD' }) {
+export default function ExpenseTracker({ itinerary, currency = 'INR' }) {
   const [expenses, setExpenses] = useState([]);
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');

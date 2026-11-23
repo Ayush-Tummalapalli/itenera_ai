@@ -4,8 +4,8 @@
  */
 
 export const CURRENCIES = {
-  USD: { code: 'USD', symbol: '$', rate: 1.0, flag: '', name: 'USD ($)' },
   INR: { code: 'INR', symbol: '₹', rate: 84.0, flag: '', name: 'INR (₹)' },
+  USD: { code: 'USD', symbol: '$', rate: 1.0, flag: '', name: 'USD ($)' },
   EUR: { code: 'EUR', symbol: '€', rate: 0.92, flag: '', name: 'EUR (€)' },
 };
 
@@ -13,7 +13,7 @@ export const CURRENCIES = {
  * Parses numeric USD values inside strings (e.g., "$450 / person", "$15 - $25")
  * and converts them to the target currency.
  */
-export function convertCurrencyString(str, targetCode = 'USD') {
+export function convertCurrencyString(str, targetCode = 'INR') {
   if (!str || typeof str !== 'string') return str;
   const currencyObj = CURRENCIES[targetCode] || CURRENCIES.USD;
 

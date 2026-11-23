@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { convertCurrencyString } from '@/lib/currencyConverter';
 import { PieChart, Hotel, Utensils, Ticket } from 'lucide-react';
 
-export default function BudgetChart({ budgetBreakdown, currency = 'USD' }) {
+export default function BudgetChart({ budgetBreakdown, currency = 'INR' }) {
   const [activeSegment, setActiveSegment] = useState(null);
 
   if (!budgetBreakdown) return null;

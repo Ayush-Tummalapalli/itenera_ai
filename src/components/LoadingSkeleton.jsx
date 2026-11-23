@@ -11,7 +11,7 @@ export default function LoadingSkeleton() {
 
       <div className="space-y-1.5 max-w-md mx-auto">
         <h3 className="font-serif text-xl font-semibold text-[#162842]">
-          Formulating Your Field Dossier
+          Generating itinerary
         </h3>
         <p className="text-xs sm:text-sm text-[#526685] leading-relaxed">
           Synthesizing daily timing, local transit routes, companion considerations, and expenditure estimates...

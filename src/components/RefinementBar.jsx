@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowRight, Sliders, DollarSign } from 'lucide-react';
+import { ArrowRight, Sliders } from 'lucide-react';
+import { CURRENCIES } from '@/lib/currencyConverter';
 
 const REFINEMENT_PRESETS = [
   "Economy & Budget",
@@ -13,9 +14,11 @@ const REFINEMENT_PRESETS = [
   "Scenic & Photography"
 ];
 
-export default function RefinementBar({ onRefine, isRefining }) {
+export default function RefinementBar({ onRefine, isRefining, currency = 'INR' }) {
   const [instruction, setInstruction] = useState('');
   const [targetBudget, setTargetBudget] = useState('');
+
+  const currSymbol = CURRENCIES[currency]?.symbol || '₹';
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,8 +27,8 @@ export default function RefinementBar({ onRefine, isRefining }) {
     let fullInstruction = instruction.trim();
     if (targetBudget.trim()) {
       fullInstruction = fullInstruction 
-        ? `${fullInstruction} (Target budget: $${targetBudget.trim()} per pax)`
-        : `Adjust itinerary to target budget of $${targetBudget.trim()} per person`;
+        ? `${fullInstruction} (Target budget: ${currSymbol}${targetBudget.trim()} per pax)`
+        : `Adjust itinerary to target budget of ${currSymbol}${targetBudget.trim()} per person`;
     }
 
     if (!fullInstruction) return;
@@ -77,7 +80,7 @@ export default function RefinementBar({ onRefine, isRefining }) {
           {/* Target Budget per Pax Input */}
           <div className="relative sm:w-44">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
-              <DollarSign className="w-4 h-4 text-[#E05A3A]" />
+              <span className="text-xs font-bold text-[#E05A3A]">{currSymbol}</span>
             </div>
             <input
               type="number"

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import StopItem from './StopItem';
 import { Plus } from 'lucide-react';
 
-export default function DayCard({ day, destination, currency, onUpdateStops }) {
+export default function DayCard({ day, destination, currency = 'INR', onUpdateStops }) {
   const [isAdding, setIsAdding] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newTime, setNewTime] = useState('');

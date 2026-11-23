@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ChevronDown, ChevronUp, Trash2, ArrowUp, ArrowDown, MapPin, Clock, ExternalLink } from 'lucide-react';
 import { convertCurrencyString } from '@/lib/currencyConverter';
 
-export default function StopItem({ stop, isFirst, isLast, onMoveUp, onMoveDown, onDelete, destination, currency = 'USD' }) {
+export default function StopItem({ stop, isFirst, isLast, onMoveUp, onMoveDown, onDelete, destination, currency = 'INR' }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const mapSearchQuery = encodeURIComponent(`${stop.title} ${stop.location || ''} ${destination || ''}`.trim());

@@ -46,7 +46,7 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
   const [copiedShare, setCopiedShare] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
-  const [currency, setCurrency] = useState('USD');
+  const [currency, setCurrency] = useState('INR');
   const [activeTab, setActiveTab] = useState('itinerary'); // 'itinerary' | 'map' | 'expenses' | 'packing'
 
   if (!itinerary) return null;
@@ -147,7 +147,7 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
 
   const formattedTotalBudget = itinerary.estimatedBudgetPerPax 
     ? convertCurrencyString(itinerary.estimatedBudgetPerPax, currency) 
-    : '$350 / person';
+    : '₹25,000 / person';
 
   const preferences = itinerary.preferences || {};
 
@@ -239,6 +239,16 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
                   <span>Est. Budget: {formattedTotalBudget}</span>
                 </div>
               )}
+
+              {/* Prominent Top Sync Calendar Button */}
+              <button
+                onClick={() => setIsCalendarModalOpen(true)}
+                title="Export trip schedule to Apple Calendar, Google Calendar, or Outlook"
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F3785B] hover:bg-[#E05A3A] text-white rounded-md text-xs font-semibold border border-white/20 transition-all hover:scale-105 shadow-sm no-print cursor-pointer"
+              >
+                <CalendarPlus className="w-3.5 h-3.5 text-white" />
+                <span>Sync Calendar</span>
+              </button>
             </div>
           </div>
 
@@ -468,6 +478,24 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
       {/* View Content based on activeTab */}
       {activeTab === 'itinerary' && (
         <div className="space-y-6">
+          {/* AI Refinement Bar Component */}
+          <div className="no-print">
+            <RefinementBar onRefine={handleRefine} isRefining={isRefining} currency={currency} />
+          </div>
+
+          {/* Days Breakdown */}
+          <div className="space-y-5 sm:space-y-6">
+            {itinerary.days.map((day) => (
+              <DayCard
+                key={day.dayNumber}
+                day={day}
+                destination={itinerary.destination}
+                currency={currency}
+                onUpdateStops={handleUpdateStops}
+              />
+            ))}
+          </div>
+
           {/* AI Travel Agent Strategic Blueprint Banner */}
           {itinerary.agentNotes && (
             <AgentIntelligenceBanner
@@ -537,24 +565,6 @@ export default function ItineraryView({ itinerary, onUpdateItinerary, onReset, o
               )}
             </div>
           )}
-
-          {/* AI Refinement Bar Component */}
-          <div className="no-print">
-            <RefinementBar onRefine={handleRefine} isRefining={isRefining} />
-          </div>
-
-          {/* Days Breakdown */}
-          <div className="space-y-5 sm:space-y-6">
-            {itinerary.days.map((day) => (
-              <DayCard
-                key={day.dayNumber}
-                day={day}
-                destination={itinerary.destination}
-                currency={currency}
-                onUpdateStops={handleUpdateStops}
-              />
-            ))}
-          </div>
         </div>
       )}
 
